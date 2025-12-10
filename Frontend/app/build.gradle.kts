@@ -40,4 +40,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Retrofit pour les appels HTTP
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+// OkHttp pour logging (optionnel mais utile)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+// Material Components (si pas déjà présent)
+    implementation("com.google.android.material:material:1.11.0")
 }

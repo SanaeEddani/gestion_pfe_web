@@ -47,7 +47,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Mot de passe -->
@@ -65,7 +64,6 @@
                     android:inputType="textPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Rôle -->
@@ -97,7 +95,6 @@
                     android:textColor="@color/primaryBlue" />
             </RadioGroup>
 
-
             <!-- SECTION ETUDIANT -->
             <LinearLayout
                 android:id="@+id/studentSection"
@@ -119,7 +116,6 @@
                         android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Filière -->
@@ -136,9 +132,7 @@
                     android:layout_height="wrap_content"
                     android:spinnerMode="dropdown"
                     android:layout_marginBottom="20dp" />
-
             </LinearLayout>
-
 
             <!-- SECTION ENCADRANT -->
             <LinearLayout
@@ -176,9 +170,7 @@
                         android:inputType="text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-
                 </com.google.android.material.textfield.TextInputLayout>
-
             </LinearLayout>
 
             <!-- Bouton S’inscrire -->
@@ -191,8 +183,6 @@
                 android:textColor="@color/white"
                 android:padding="12dp"
                 android:elevation="4dp" />
-
         </LinearLayout>
     </ScrollView>
-
 </RelativeLayout>
