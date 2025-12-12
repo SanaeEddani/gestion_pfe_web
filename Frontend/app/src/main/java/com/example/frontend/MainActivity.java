@@ -1,8 +1,11 @@
 package com.example.frontend;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,10 +32,22 @@ public class MainActivity extends AppCompatActivity {
         EditText email = findViewById(R.id.email);
         EditText password = findViewById(R.id.password);
         Button btnLogin = findViewById(R.id.btnLogin);
+        TextView tvRegister = findViewById(R.id.tvRegister);
+        TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
+
+        tvRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        tvForgotPassword.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+        });
 
         // Initialiser Retrofit
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.17.225.245:9090/") // URL de ton backend
+                .baseUrl("http://192.168.43.16:9090/") // URL de ton backend
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -75,4 +90,11 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", null)
                 .show();
     }
+
+
+
+
+
+
+
 }

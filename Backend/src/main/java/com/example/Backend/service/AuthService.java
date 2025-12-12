@@ -1,11 +1,21 @@
 package com.example.Backend.service;
 
+import com.example.Backend.model.ResetPasswordToken;
 import com.example.Backend.model.Utilisateur;
+import com.example.Backend.repository.ResetPasswordTokenRepository;
 import com.example.Backend.repository.UtilisateurRepository;
 import com.example.Backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import org.springframework.mail.SimpleMailMessage;
+
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -18,6 +28,19 @@ public class AuthService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private ResetPasswordTokenRepository resetPasswordTokenRepository;
+
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;// déjà existant, juste pour rappel
+
+    @Autowired
+    private OtpService otpService;
 
     public String login(String email, String password) {
 
@@ -49,6 +72,21 @@ public class AuthService {
         return jwtUtil.generateToken(user.getEmail(), user.getRole().getName());
     }
 
+    public void sendOtp(String email) {
+        Utilisateur user = utilisateurRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+
+        String otp = otpService.generateOtp(email);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Code OTP de réinitialisation");
+        message.setText("Votre code OTP est : " + otp + "\nIl expire dans 5 minutes.");
+
+        mailSender.send(message);
+    }
+
+
     /**
      * Méthode utilitaire pour tester BCrypt
      */
@@ -58,4 +96,26 @@ public class AuthService {
             System.out.println("Hash " + i + " : " + hash + " | matches ? " + passwordEncoder.matches(password, hash));
         }
     }
+
+
+
+
+    public void resetPasswordWithOtp(String email, String otp, String newPassword) {
+        boolean ok = otpService.validateOtp(email, otp);
+
+        if (!ok) {
+            throw new RuntimeException("OTP invalide ou expiré");
+        }
+
+        Utilisateur user = utilisateurRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+
+        user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
+        utilisateurRepository.save(user);
+    }
 }
+
+
+
+
+
