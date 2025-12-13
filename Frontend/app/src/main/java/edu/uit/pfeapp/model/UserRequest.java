@@ -5,12 +5,13 @@ public class UserRequest {
     private String prenom;
     private String email;
     private String password;
-    private String role;
+    private String role; // "etudiant" ou "encadrant"
     private String filiere;
     private String departement;
+    private String appogee; // Changé de numAppogee à appogee
     private String codeProf;
-    private String numAppogee;
 
+    // Getters et Setters
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
 
@@ -32,9 +33,9 @@ public class UserRequest {
     public String getDepartement() { return departement; }
     public void setDepartement(String departement) { this.departement = departement; }
 
+    public String getAppogee() { return appogee; }
+    public void setAppogee(String appogee) { this.appogee = appogee; }
+
     public String getCodeProf() { return codeProf; }
     public void setCodeProf(String codeProf) { this.codeProf = codeProf; }
-
-    public String getNumAppogee() { return numAppogee; }
-    public void setNumAppogee(String numAppogee) { this.numAppogee = numAppogee; }
 }

@@ -3,4 +3,5 @@
     <color name="primaryDarkBlue">#1976D2</color>
     <color name="accentBlue">#64B5F6</color>
     <color name="white">#FFFFFF</color>
+    <color name="errorRed">#FF3B30</color> <!-- Couleur pour les règles du mot de passe -->
 </resources>

@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.frontend"
+    namespace = "edu.uit.pfeapp"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.frontend"
+        applicationId = "edu.uit.pfeapp"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -44,8 +43,8 @@ dependencies {
     // Retrofit pour les appels HTTP
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-// OkHttp pour logging (optionnel mais utile)
+    // OkHttp pour logging (optionnel mais utile)
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-// Material Components (si pas déjà présent)
+    // Material Components (si pas déjà présent)
     implementation("com.google.android.material:material:1.11.0")
 }

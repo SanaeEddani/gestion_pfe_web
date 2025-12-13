@@ -33,13 +33,42 @@
             android:background="@drawable/rounded_edittext"
             android:elevation="8dp">
 
+            <!-- Nom -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nom *"
+                app:boxBackgroundMode="outline"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nomEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords|textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Prénom -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Prénom *"
+                app:boxBackgroundMode="outline"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/prenomEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords|textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Email -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email *"
                 app:boxBackgroundMode="outline"
-                app:boxStrokeColor="@color/primaryBlue"
                 android:layout_marginBottom="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -56,19 +85,62 @@
                 android:layout_height="wrap_content"
                 android:hint="Mot de passe *"
                 app:endIconMode="password_toggle"
-                app:boxBackgroundMode="outline"
-                android:layout_marginBottom="16dp">
+                app:boxBackgroundMode="outline">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/passwordEditText"
-                    android:inputType="textPassword"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Règles du mot de passe -->
+            <LinearLayout
+                android:id="@+id/passwordRulesLayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/ruleLength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Au moins 8 caractères"
+                    android:textColor="@color/errorRed" />
+
+                <TextView
+                    android:id="@+id/ruleLowercase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Au moins une minuscule"
+                    android:textColor="@color/errorRed" />
+
+                <TextView
+                    android:id="@+id/ruleUppercase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Au moins une majuscule"
+                    android:textColor="@color/errorRed" />
+
+                <TextView
+                    android:id="@+id/ruleDigit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Au moins un chiffre"
+                    android:textColor="@color/errorRed" />
+
+                <TextView
+                    android:id="@+id/ruleSpecial"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="• Au moins un caractère spécial (@#$%!)"
+                    android:textColor="@color/errorRed" />
+            </LinearLayout>
 
             <!-- Rôle -->
             <TextView
-                android:id="@+id/roleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Je suis *"
@@ -85,12 +157,16 @@
 
                 <RadioButton
                     android:id="@+id/studentRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Étudiant"
                     android:textColor="@color/primaryBlue"
                     android:layout_marginEnd="20dp" />
 
                 <RadioButton
                     android:id="@+id/teacherRadioButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Encadrant"
                     android:textColor="@color/primaryBlue" />
             </RadioGroup>
@@ -103,7 +179,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Apogée -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -113,24 +188,14 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/apogeeEditText"
-                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Filière -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Filière *"
-                    android:textColor="@color/primaryBlue"
-                    android:layout_marginBottom="4dp" />
 
                 <Spinner
                     android:id="@+id/filiereSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown"
                     android:layout_marginBottom="20dp" />
             </LinearLayout>
 
@@ -142,22 +207,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Département -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Département *"
-                    android:textColor="@color/primaryBlue"
-                    android:layout_marginBottom="4dp" />
-
                 <Spinner
                     android:id="@+id/departementSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:spinnerMode="dropdown"
                     android:layout_marginBottom="20dp" />
 
-                <!-- Code Prof -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -167,7 +222,6 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/codeProfEditText"
-                        android:inputType="text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -176,13 +230,26 @@
             <!-- Bouton S’inscrire -->
             <Button
                 android:id="@+id/registerButton"
-                android:text="S’inscrire"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="S’inscrire"
                 android:background="@drawable/button_register"
                 android:textColor="@color/white"
-                android:padding="12dp"
-                android:elevation="4dp" />
+                android:padding="12dp" />
+
+            <!-- Lien Login -->
+            <TextView
+                android:id="@+id/loginLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Vous avez déjà un compte ? Se connecter"
+                android:textColor="@color/primaryBlue"
+                android:textSize="14sp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:focusable="true" />
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
