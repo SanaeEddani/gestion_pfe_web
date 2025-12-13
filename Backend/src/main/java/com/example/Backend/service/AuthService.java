@@ -7,6 +7,7 @@ import com.example.Backend.repository.UtilisateurRepository;
 import com.example.Backend.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -71,7 +72,7 @@ public class AuthService {
         // Génération du token JWT
         return jwtUtil.generateToken(user.getEmail(), user.getRole().getName());
     }
-
+    @Async
     public void sendOtp(String email) {
         Utilisateur user = utilisateurRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
@@ -100,8 +101,10 @@ public class AuthService {
 
 
 
+
+
     public void resetPasswordWithOtp(String email, String otp, String newPassword) {
-        boolean ok = otpService.validateOtp(email, otp);
+        boolean ok = otpService.validateOtp(email, otp,true);
 
         if (!ok) {
             throw new RuntimeException("OTP invalide ou expiré");

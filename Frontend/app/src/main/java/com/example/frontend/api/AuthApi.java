@@ -15,20 +15,25 @@ public interface AuthApi {
     @POST("api/auth/login")  // endpoint Spring Boot
     Call<JwtResponse> login(@Body LoginRequest request);
 
-    // Demande d'OTP
-    @POST("auth/password/forgot")
+    @POST("auth/password/send-otp")
     @FormUrlEncoded
     Call<ResponseBody> forgotPassword(@Field("email") String email);
 
+
     // Vérification OTP
+
+
     @POST("auth/password/verify-otp")
     @FormUrlEncoded
     Call<Boolean> verifyOtp(@Field("email") String email, @Field("otp") String otp);
 
     // Réinitialisation mot de passe
-    @POST("auth/password/reset")
-    @FormUrlEncoded
-    Call<Void> resetPassword(@Field("email") String email, @Field("newPassword") String newPassword);
+    @POST("auth/password/reset-password")
+    Call<ResponseBody> resetPassword(
+            @Query("email") String email,
+            @Query("otp") String otp,
+            @Query("newPassword") String newPassword
+    );
 
 }
 

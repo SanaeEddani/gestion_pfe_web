@@ -3,7 +3,11 @@ package com.example.Backend.controller;
 import com.example.Backend.service.AuthService;
 import com.example.Backend.service.OtpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth/password")
@@ -21,10 +25,14 @@ public class ResetPasswordController {
      * Ex: POST /auth/password/send-otp?email=test@example.com
      */
     @PostMapping("/send-otp")
-    public String sendOtp(@RequestParam String email) {
-        authService.sendOtp(email);
-        return "OTP envoyé";
+    public Map<String, String> sendOtp(@RequestParam String email) {
+        authService.sendOtp(email); // envoi asynchrone
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("message", "OTP envoyé");
+        return response;
     }
+
 
     /**
      * Vérification de l'OTP saisi par l'utilisateur
@@ -32,7 +40,7 @@ public class ResetPasswordController {
      */
     @PostMapping("/verify-otp")
     public boolean verifyOtp(@RequestParam String email, @RequestParam String otp) {
-        return otpService.validateOtp(email, otp);
+        return otpService.validateOtp(email, otp,false);
     }
 
     /**

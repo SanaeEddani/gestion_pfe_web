@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import okhttp3.OkHttpClient;
+import java.util.concurrent.TimeUnit;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
@@ -32,8 +35,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         EditText emailForgot = findViewById(R.id.emailForgot);
         Button btnSendReset = findViewById(R.id.btnSendReset);
 
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .build();
+
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.16:9090/") // URL de ton backend
+                .baseUrl("http://192.168.43.16:9090/")
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -42,7 +53,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         btnSendReset.setOnClickListener(v -> {
             String email = emailForgot.getText().toString().trim();
             if (email.isEmpty()) {
-                showPopup("Erreur", "Veuillez entrer votre email");
+                Toast.makeText(ForgotPasswordActivity.this, "Veuillez entrer votre email",Toast.LENGTH_SHORT).show();
+
                 return;
             }
 
@@ -51,7 +63,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
-                        showPopup("Succès", "OTP envoyé à votre email");
+
+                        Toast.makeText(ForgotPasswordActivity.this, "OTP envoyé à votre email avec Succès ",Toast.LENGTH_SHORT).show();
 
                         // Aller à la page d'entrée OTP
                         Intent i = new Intent(ForgotPasswordActivity.this, VerifyOtpActivity.class);
@@ -71,9 +84,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                         showPopup(
                                 "Erreur côté serveur",
-                                "Code HTTP: " + response.code() +
-                                        "\nMessage: " + response.message() +
-                                        "\nDétails: " + errorBody
+
+                                        "\nMessage: " + response.message()
                         );
                     }
                 }

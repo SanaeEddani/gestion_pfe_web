@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -69,9 +70,33 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        showPopup("Succès", "Connexion réussie !");
+                        int role = response.body().getRoleInt();
+                        String token = response.body().getToken();
+
+
+                        // Stocker token si besoin
+                        // SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+                        // prefs.edit().putString("token", token).apply();
+
+                        // Redirection selon rôle
+                        switch (role) {
+                            case 1:
+                                startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                                break;
+                            case 2:
+                                startActivity(new Intent(MainActivity.this, StudentActivity.class));
+                                break;
+                            case 3:
+                                startActivity(new Intent(MainActivity.this, CadreActivity.class));
+                                break;
+                            default:
+                                Toast.makeText(MainActivity.this, "Rôle inconnu",Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+
+                        finish(); // fermer LoginActivity
                     } else {
-                        showPopup("Erreur de connexion", "Email ou mot de passe incorrect");
+                        Toast.makeText(MainActivity.this, "Email ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
                     }
                 }
 

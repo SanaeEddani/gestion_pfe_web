@@ -25,8 +25,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/auth/password/forgot").permitAll()
                         .requestMatchers("/auth/password/send-otp").permitAll()
-                        .requestMatchers("auth/password/verify-otp").permitAll()
-                        .requestMatchers("/auth/password/reset").permitAll()
+                        .requestMatchers("/auth/password/verify-otp").permitAll()
+                        .requestMatchers("auth/password/reset-password").permitAll()
 
                         // 🔒 Tout le reste nécessite un token (auth obligatoire)
                         .anyRequest().authenticated()

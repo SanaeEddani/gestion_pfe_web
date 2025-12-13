@@ -15,9 +15,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Frontend">
         <activity
-            android:name=".VerifyOtpActivity"
+            android:name=".CadreActivity"
             android:exported="false" />
-        <!-- Activity de login principale -->
+        <activity
+            android:name=".StudentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VerifyOtpActivity"
+            android:exported="false" /> <!-- Activity de login principale -->
         <activity
             android:name=".MainActivity"
             android:exported="true">

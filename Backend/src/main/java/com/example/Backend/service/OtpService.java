@@ -24,7 +24,8 @@ public class OtpService {
         return otp;
     }
 
-    public boolean validateOtp(String email, String otp) {
+    // Ajoute un paramètre pour savoir si on supprime l'OTP ou pas
+    public boolean validateOtp(String email, String otp, boolean consume) {
         if (!otpStorage.containsKey(email)) return false;
 
         String storedOtp = otpStorage.get(email);
@@ -38,12 +39,12 @@ public class OtpService {
 
         boolean isValid = storedOtp.equals(otp);
 
-        if (isValid) {
+        if (isValid && consume) {
             otpStorage.remove(email);
             otpExpiration.remove(email);
         }
 
         return isValid;
-    }
-}
+    }}
+
 
