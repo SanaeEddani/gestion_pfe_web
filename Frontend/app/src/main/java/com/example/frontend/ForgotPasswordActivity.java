@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
+import com.example.frontend.api.RetrofitClient;
 
 import java.io.IOException;
 
@@ -42,13 +43,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.16:9090/")
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        authApi = retrofit.create(AuthApi.class);
+        AuthApi authApi = RetrofitClient
+                .getRetrofitInstance()
+                .create(AuthApi.class);
 
         btnSendReset.setOnClickListener(v -> {
             String email = emailForgot.getText().toString().trim();

@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
+import com.example.frontend.api.RetrofitClient;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,12 +44,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
         EditText confirmPasswordInput = findViewById(R.id.confirmPassword); // Ajoutez ce champ dans votre layout
         Button btnReset = findViewById(R.id.btnResetPassword);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.16:9090/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        authApi = retrofit.create(AuthApi.class);
+        AuthApi authApi = RetrofitClient
+                .getRetrofitInstance()
+                .create(AuthApi.class);
 
         btnReset.setOnClickListener(v -> {
             String newPassword = newPasswordInput.getText().toString().trim();

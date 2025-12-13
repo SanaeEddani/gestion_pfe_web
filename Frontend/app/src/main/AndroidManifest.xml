@@ -51,7 +51,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="192.168.43.16"
+                    android:host="172.17.225.245"
                     android:pathPrefix="/reset-password"
                     android:scheme="http" />
             </intent-filter>

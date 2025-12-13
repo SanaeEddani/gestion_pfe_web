@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
+import com.example.frontend.api.RetrofitClient;
 import com.example.frontend.model.JwtResponse;
 import com.example.frontend.model.LoginRequest;
 
@@ -18,7 +19,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,12 +48,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialiser Retrofit
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.16:9090/") // URL de ton backend
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        AuthApi authApi = RetrofitClient
+                .getRetrofitInstance()
+                .create(AuthApi.class);
 
-        authApi = retrofit.create(AuthApi.class);
+
 
         btnLogin.setOnClickListener(v -> {
             String userEmail = email.getText().toString().trim();
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             // Créer l'objet LoginRequest
             LoginRequest request = new LoginRequest(userEmail, userPassword);
 
-            authApi.login(request).enqueue(new Callback<JwtResponse>() {
+            authApi.login(request).enqueue(new Callback<JwtResponse>()  {
                 @Override
                 public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

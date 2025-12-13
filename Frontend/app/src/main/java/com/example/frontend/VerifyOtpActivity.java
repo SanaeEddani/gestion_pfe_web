@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
+import com.example.frontend.api.RetrofitClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,11 +35,9 @@ public class VerifyOtpActivity extends AppCompatActivity {
         email = getIntent().getStringExtra("email");
 
         // Initialiser Retrofit
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.43.16:9090/") // URL du backend
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        authApi = retrofit.create(AuthApi.class);
+        AuthApi authApi = RetrofitClient
+                .getRetrofitInstance()
+                .create(AuthApi.class);
 
         verifyOtpBtn.setOnClickListener(v -> verify());
     }
