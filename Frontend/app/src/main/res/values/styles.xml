@@ -1,0 +1,8 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryBlue</item>
+        <item name="colorPrimaryDark">@color/primaryDarkBlue</item>
+        <item name="colorAccent">@color/accentBlue</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+</resources>

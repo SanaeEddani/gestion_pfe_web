@@ -18,21 +18,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-
-                        // 🔓 Ces deux routes n'ont pas besoin d'être authentifiées
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .requestMatchers("/auth/password/forgot").permitAll()
-                        .requestMatchers("/auth/password/send-otp").permitAll()
-                        .requestMatchers("/auth/password/verify-otp").permitAll()
-                        .requestMatchers("auth/password/reset-password").permitAll()
-
-                        // 🔒 Tout le reste nécessite un token (auth obligatoire)
-                        .anyRequest().authenticated()
-                );
+            .csrf(csrf -> csrf.disable()) // désactiver CSRF (ok pour tests)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/**").permitAll() // autoriser toutes les requêtes
+            );
 
         return http.build();
     }
-
 }

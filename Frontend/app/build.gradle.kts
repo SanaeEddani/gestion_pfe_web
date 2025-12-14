@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.frontend"
+    namespace = "edu.uit.pfeapp"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.frontend"
+        applicationId = "edu.uit.pfeapp"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -25,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,14 +33,24 @@ android {
 }
 
 dependencies {
-
+    // AndroidX
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Retrofit (HTTP client)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // OkHttp logging (utile pour debug réseau)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+
+    // Material Components (sécurité si pas couvert par libs)
+    implementation("com.google.android.material:material:1.11.0")
 }

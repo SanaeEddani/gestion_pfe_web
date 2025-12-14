@@ -1,46 +1,49 @@
 package com.example.Backend.controller;
 
 import com.example.Backend.dto.LoginRequest;
+import com.example.Backend.dto.SignupRequest;
 import com.example.Backend.model.Utilisateur;
 import com.example.Backend.repository.UtilisateurRepository;
 import com.example.Backend.service.AuthService;
-import com.fasterxml.jackson.core.JsonPointer;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.Backend.service.SignupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    private final SignupService signupService;
+    private final UtilisateurRepository userRepository;
 
-    @Autowired
-    UtilisateurRepository userRepository;
+    public AuthController(AuthService authService,
+                          SignupService signupService,
+                          UtilisateurRepository userRepository) {
+        this.authService = authService;
+        this.signupService = signupService;
+        this.userRepository = userRepository;
+    }
 
+    /* =========================
+       LOGIN
+       ========================= */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
-            // Chercher l'utilisateur pour récupérer le rôle
-
             Utilisateur user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-
-            // Générer le token
             String token = authService.login(request.getEmail(), request.getPassword());
 
-            // Préparer la réponse pour le frontend
             Map<String, Object> response = Map.of(
                     "token", token,
-                    "role", user.getRole().getId() // ou getName() selon ce que tu veux envoyer
+                    "role", user.getRole().getName() // ou getId() si tu veux
             );
 
             return ResponseEntity.ok(response);
@@ -51,7 +54,36 @@ public class AuthController {
         }
     }
 
+    /* =========================
+       REGISTER (SignupService)
+       ========================= */
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, Object>> register(@RequestBody SignupRequest req) {
 
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String result = signupService.signup(req);
+
+            boolean success = result.equalsIgnoreCase("Inscription réussie");
+
+            response.put("success", success);
+            response.put("message", result);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Erreur serveur : " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /* =========================
+       TEST
+       ========================= */
+    @GetMapping("/test")
+    public String test() {
+        return "Backend is working!";
+    }
 }
-
-

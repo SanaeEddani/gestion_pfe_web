@@ -6,12 +6,20 @@ import jakarta.persistence.*;
 @Table(name = "roles")
 public class Role {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
+
+    // Constructeur vide requis par JPA
+    public Role() {}
+
+    // Constructeur utile pour créer un rôle facilement
+    public Role(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -29,4 +37,3 @@ public class Role {
         this.name = name;
     }
 }
-
