@@ -1,4 +1,4 @@
-package edu.uit.pfeapp.model;
+package com.example.frontend.model;
 
 public class Role {
     private int id;

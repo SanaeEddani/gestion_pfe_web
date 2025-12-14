@@ -12,10 +12,16 @@ public class JwtResponse {
 
     // Méthode utilitaire pour récupérer role en int
     public int getRoleInt() {
-        try {
-            return Integer.parseInt(getRole());
-        } catch (NumberFormatException e) {
-            return 0; // rôle inconnu
+        if (getRole() == null) return 0;
+        switch (getRole().toLowerCase()) {
+            case "admin":
+                return 1;
+            case "etudiant":
+                return 2;
+            case "encadrant":
+                return 3;
+            default:
+                return 0;
         }
     }
 }

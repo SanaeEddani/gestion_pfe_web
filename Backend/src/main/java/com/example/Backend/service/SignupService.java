@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AuthService {
+public class SignupService {
 
     private final UtilisateurRepository utilRepo;
     private final AppogeeRepository appRepo;
@@ -19,7 +19,7 @@ public class AuthService {
     private final RoleRepository roleRepo;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    public AuthService(UtilisateurRepository u,
+    public SignupService(UtilisateurRepository u,
                        AppogeeRepository a,
                        CodeProfRepository p,
                        RoleRepository r) {

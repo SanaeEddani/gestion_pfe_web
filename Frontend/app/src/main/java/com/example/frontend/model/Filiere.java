@@ -1,6 +1,6 @@
-package edu.uit.pfeapp.model;
+package com.example.frontend.model;
 
-public class Departement {
+public class Filiere {
     private int id;
     private String name;
 

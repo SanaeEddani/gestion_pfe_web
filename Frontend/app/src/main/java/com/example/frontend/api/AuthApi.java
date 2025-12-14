@@ -1,13 +1,20 @@
 package com.example.frontend.api;
 
+import com.example.frontend.model.Appogee;
+import com.example.frontend.model.CodeProf;
 import com.example.frontend.model.JwtResponse;
 import com.example.frontend.model.LoginRequest;
+import com.example.frontend.model.UserRequest;
+import com.example.frontend.model.UserResponse;
+
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -34,6 +41,20 @@ public interface AuthApi {
             @Query("otp") String otp,
             @Query("newPassword") String newPassword
     );
+
+
+    @POST("/api/auth/register")
+     Call<UserResponse> registerUser(@Body UserRequest userRequest) ;
+
+
+
+    // Liste des codes Apogée (si jamais tu veux récupérer depuis backend)
+    @GET("/api/appogees")
+    Call<List<Appogee>> getAppogees();
+
+    // Liste des codes Prof
+    @GET("/api/codeprofs")
+    Call<List<CodeProf>> getCodeProfs();
 
 }
 

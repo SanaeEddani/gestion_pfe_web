@@ -23,7 +23,8 @@ public class VerifyOtpActivity extends AppCompatActivity {
     Button verifyOtpBtn;
     String email;
 
-    private AuthApi authApi;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +35,15 @@ public class VerifyOtpActivity extends AppCompatActivity {
         verifyOtpBtn = findViewById(R.id.verifyOtpBtn);
         email = getIntent().getStringExtra("email");
 
-        // Initialiser Retrofit
-        AuthApi authApi = RetrofitClient
-                .getRetrofitInstance()
-                .create(AuthApi.class);
+
 
         verifyOtpBtn.setOnClickListener(v -> verify());
     }
+
+    // Initialiser Retrofit
+    AuthApi authApi = RetrofitClient
+            .getRetrofitInstance()
+            .create(AuthApi.class);
 
     private void verify() {
         String otp = otpField.getText().toString().trim();

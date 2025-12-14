@@ -29,7 +29,7 @@
 
         <!-- Auth / Utilisateur -->
         <activity
-            android:name=".auth.SignupActivity"
+            android:name=".SignupActivity"
             android:exported="false" />
 
         <activity

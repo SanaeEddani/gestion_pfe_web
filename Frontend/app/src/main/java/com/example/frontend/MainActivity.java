@@ -1,5 +1,8 @@
 package com.example.frontend;
 
+
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -21,12 +24,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 
-import edu.uit.pfeapp.R;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
-    private AuthApi authApi;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
         tvRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
             startActivity(intent);
         });
 

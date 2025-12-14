@@ -1,9 +1,9 @@
-package edu.uit.pfeapp.api;
+package com.example.frontend.api;
 
-import edu.uit.pfeapp.model.UserRequest;
-import edu.uit.pfeapp.model.UserResponse;
-import edu.uit.pfeapp.model.Appogee;
-import edu.uit.pfeapp.model.CodeProf;
+import com.example.frontend.model.UserRequest;
+import com.example.frontend.model.UserResponse;
+import com.example.frontend.model.Appogee;
+import com.example.frontend.model.CodeProf;
 
 import java.util.List;
 

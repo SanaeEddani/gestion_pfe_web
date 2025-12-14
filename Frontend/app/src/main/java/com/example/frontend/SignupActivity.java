@@ -1,6 +1,7 @@
-package edu.uit.pfeapp.auth;
+package com.example.frontend;
 
-import edu.uit.pfeapp.R;
+
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,9 +20,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import edu.uit.pfeapp.api.ApiClient;
-import edu.uit.pfeapp.model.UserRequest;
-import edu.uit.pfeapp.model.UserResponse;
+import com.example.frontend.api.AuthApi;
+import com.example.frontend.api.RetrofitClient;
+import com.example.frontend.model.UserRequest;
+import com.example.frontend.model.UserResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,9 +107,13 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Lien login
+        loginLink.setOnClickListener(v -> {
+            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
 
     }
+
 
     /* =======================
        PASSWORD VALIDATION
@@ -202,6 +208,11 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
+    // Initialiser Retrofit
+    AuthApi authApi = RetrofitClient
+            .getRetrofitInstance()
+            .create(AuthApi.class);
+
     /* =======================
        API CALL
        ======================= */
@@ -226,7 +237,9 @@ public class SignupActivity extends AppCompatActivity {
         registerButton.setEnabled(false);
         registerButton.setText("Inscription...");
 
-        ApiClient.getApiService().registerUser(request).enqueue(new Callback<UserResponse>() {
+
+
+        authApi.registerUser(request).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 registerButton.setEnabled(true);

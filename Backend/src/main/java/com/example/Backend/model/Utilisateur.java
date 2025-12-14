@@ -45,7 +45,7 @@ public class Utilisateur {
     private CodeProf codeProf;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "role_id", nullable = false)
+    @JoinColumn(name = "role_id", nullable = false, updatable = false)
     private Role role;
 
     // =======================

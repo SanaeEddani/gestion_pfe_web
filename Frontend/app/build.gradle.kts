@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "edu.uit.pfeapp"
+    namespace = "com.example.frontend"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "edu.uit.pfeapp"
+        applicationId = "com.example.frontend"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
