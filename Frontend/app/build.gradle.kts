@@ -25,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,19 +33,24 @@ android {
 }
 
 dependencies {
+    // AndroidX
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
-    // Retrofit pour les appels HTTP
+    // Retrofit (HTTP client)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    // OkHttp pour logging (optionnel mais utile)
+
+    // OkHttp logging (utile pour debug réseau)
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
-    // Material Components (si pas déjà présent)
+
+    // Material Components (sécurité si pas couvert par libs)
     implementation("com.google.android.material:material:1.11.0")
 }

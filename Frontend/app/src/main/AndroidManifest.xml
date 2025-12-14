@@ -1,26 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions Internet -->
+    <!-- Permissions réseau -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Frontend"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/AppTheme">
+        tools:targetApi="31">
 
-        <!-- Votre activité SignupActivity -->
+        <!-- Activity principale (Launcher) -->
         <activity
-            android:name=".auth.SignupActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Auth / Utilisateur -->
+        <activity
+            android:name=".auth.SignupActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".VerifyOtpActivity"
+            android:exported="false" />
+
+        <!-- Reset password (Deep link) -->
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="172.17.225.245"
+                    android:pathPrefix="/reset-password" />
+            </intent-filter>
+        </activity>
+
+        <!-- Rôles -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".StudentActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CadreActivity"
+            android:exported="false" />
 
     </application>
 
