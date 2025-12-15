@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class AuthServiceTest {
 
     @Mock
-    private UtilisateurRepository utilisateurRepository;
+    private UtilisateurRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -46,23 +46,23 @@ public class AuthServiceTest {
     @BeforeEach
     void setup() {
         user = new Utilisateur();
-        user.setEmail("test@test.com");
-        user.setPasswordHash("hashedPwd");
+        user.setEmail("hajar.elmhedden2133@gmail.com");
+        user.setPasswordHash("$2a$10$BXSVrmK2BunKwBJ62sUuIuEYfGk4oKUDZQMAlugDtQ9y4V9YWx9he");
 
         Role role = new Role();
-        role.setName("USER");
+        role.setName("encadrant");
         user.setRole(role);
     }
 
     @Test
     void testLoginSuccess() {
-        when(utilisateurRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
+        when(userRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
                 .thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("123", "$2a$10$3IOjQAI6gBa0.iFds6k7cevTSALk2ZYIynMoGxcfSG4.v06PD.bya")).thenReturn(true);
+        when(passwordEncoder.matches("HAJARhajar@123", "$2a$10$BXSVrmK2BunKwBJ62sUuIuEYfGk4oKUDZQMAlugDtQ9y4V9YWx9he")).thenReturn(true);
         when(jwtUtil.generateToken("hajar.elmhedden2133@gmail.com", "encadrant"))
                 .thenReturn("jwt-token");
 
-        String token = authService.login("hajar.elmhedden2133@gmail.com", "123");
+        String token = authService.login("hajar.elmhedden2133@gmail.com", "HAJARhajar@123");
 
         assertNotNull(token);
         assertEquals("jwt-token", token);
@@ -70,9 +70,9 @@ public class AuthServiceTest {
 
     @Test
     void testLoginWrongPassword() {
-        when(utilisateurRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
+        when(userRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
                 .thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("wrong", "hashedPwd")).thenReturn(false);
+        when(passwordEncoder.matches("wrong", "$2a$10$BXSVrmK2BunKwBJ62sUuIuEYfGk4oKUDZQMAlugDtQ9y4V9YWx9he")).thenReturn(false);
 
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
                 authService.login("hajar.elmhedden2133@gmail.com", "wrong"));
@@ -84,11 +84,12 @@ public class AuthServiceTest {
     void testResetPasswordSuccess() {
         when(otpService.validateOtp("hajar.elmhedden2133@gmail.com", "123456", true))
                 .thenReturn(true);
-        when(utilisateurRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
+        when(userRepository.findByEmail("hajar.elmhedden2133@gmail.com"))
                 .thenReturn(Optional.of(user));
 
         authService.resetPasswordWithOtp("hajar.elmhedden2133@gmail.com", "123456", "newpass");
-        verify(utilisateurRepository).save(any(Utilisateur.class));
+        verify(userRepository).save(any(Utilisateur.class));
+
     }
 
     @Test
@@ -101,4 +102,5 @@ public class AuthServiceTest {
 
         assertEquals("OTP invalide ou expiré", ex.getMessage());
     }
+
 }

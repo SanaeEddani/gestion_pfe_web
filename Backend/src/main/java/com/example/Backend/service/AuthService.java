@@ -37,8 +37,7 @@ public class AuthService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Autowired
-    private UtilisateurRepository utilisateurRepository;// déjà existant, juste pour rappel
+
 
     @Autowired
     private OtpService otpService;
@@ -74,7 +73,7 @@ public class AuthService {
     }
     @Async
     public void sendOtp(String email) {
-        Utilisateur user = utilisateurRepository.findByEmail(email)
+        Utilisateur user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
         String otp = otpService.generateOtp(email);
@@ -110,11 +109,11 @@ public class AuthService {
             throw new RuntimeException("OTP invalide ou expiré");
         }
 
-        Utilisateur user = utilisateurRepository.findByEmail(email)
+        Utilisateur user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
         user.setPasswordHash(new BCryptPasswordEncoder().encode(newPassword));
-        utilisateurRepository.save(user);
+        userRepository.save(user);
     }
 }
 

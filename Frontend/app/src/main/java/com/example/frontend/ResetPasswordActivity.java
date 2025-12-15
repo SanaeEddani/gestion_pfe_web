@@ -2,12 +2,17 @@
 package com.example.frontend;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.frontend.api.AuthApi;
 import com.example.frontend.api.RetrofitClient;
@@ -16,14 +21,15 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ResetPasswordActivity extends AppCompatActivity {
 
     private AuthApi authApi;
     private String email;
     private String otp;
+    private TextView ruleLength, ruleLowercase, ruleUppercase, ruleDigit, ruleSpecial;
+    private EditText newPasswordInput, confirmPasswordInput;
+    private Button btnReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,17 +46,43 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        EditText newPasswordInput = findViewById(R.id.newPassword);
-        EditText confirmPasswordInput = findViewById(R.id.confirmPassword); // Ajoutez ce champ dans votre layout
-        Button btnReset = findViewById(R.id.btnResetPassword);
+        // Initialiser les vues
+        newPasswordInput = findViewById(R.id.newPassword);
+        confirmPasswordInput = findViewById(R.id.confirmPassword);
+        btnReset = findViewById(R.id.btnResetPassword);
 
-        AuthApi authApi = RetrofitClient
-                .getRetrofitInstance()
-                .create(AuthApi.class);
+        ruleLength = findViewById(R.id.ruleLength);
+        ruleLowercase = findViewById(R.id.ruleLowercase);
+        ruleUppercase = findViewById(R.id.ruleUppercase);
+        ruleDigit = findViewById(R.id.ruleDigit);
+        ruleSpecial = findViewById(R.id.ruleSpecial);
+
+        // Initialiser Retrofit
+        authApi = RetrofitClient.getRetrofitInstance().create(AuthApi.class);
+
+        // Ajouter le TextWatcher pour valider les règles en temps réel
+        newPasswordInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updatePasswordRules(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         btnReset.setOnClickListener(v -> {
             String newPassword = newPasswordInput.getText().toString().trim();
             String confirmPassword = confirmPasswordInput.getText().toString().trim();
+
+            // Vérifier si tous les critères sont satisfaits
+            if (!isPasswordValid(newPassword)) {
+                Toast.makeText(this, "Le mot de passe ne respecte pas toutes les règles", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (newPassword.isEmpty()) {
                 Toast.makeText(this, "Veuillez entrer un nouveau mot de passe", Toast.LENGTH_SHORT).show();
@@ -93,5 +125,33 @@ public class ResetPasswordActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void updatePasswordRules(String password) {
+        toggleRule(ruleLength, password.length() >= 8);
+        toggleRule(ruleLowercase, password.matches(".*[a-z].*"));
+        toggleRule(ruleUppercase, password.matches(".*[A-Z].*"));
+        toggleRule(ruleDigit, password.matches(".*\\d.*"));
+        toggleRule(ruleSpecial, password.matches(".*[@#$%!].*"));
+    }
+
+    private void toggleRule(TextView ruleView, boolean isValid) {
+        if (isValid) {
+            ruleView.setTextColor(ContextCompat.getColor(this, R.color.successGreen));
+            // Si vous n'avez pas de couleur successGreen, utilisez:
+            // ruleView.setTextColor(Color.parseColor("#4CAF50"));
+        } else {
+            ruleView.setTextColor(ContextCompat.getColor(this, R.color.errorRed));
+            // Si vous n'avez pas de couleur errorRed, utilisez:
+            // ruleView.setTextColor(Color.parseColor("#F44336"));
+        }
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() >= 8 &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[@#$%!].*");
     }
 }
