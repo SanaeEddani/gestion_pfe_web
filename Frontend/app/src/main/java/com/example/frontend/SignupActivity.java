@@ -1,12 +1,11 @@
 package com.example.frontend;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -24,11 +23,14 @@ import com.example.frontend.api.AuthApi;
 import com.example.frontend.api.RetrofitClient;
 import com.example.frontend.model.UserRequest;
 import com.example.frontend.model.UserResponse;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignupActivity extends AppCompatActivity {
+
+    private static final String TAG = "SIGNUP_DEBUG";
 
     RadioGroup roleGroup;
     RadioButton studentBtn, teacherBtn;
@@ -41,13 +43,19 @@ public class SignupActivity extends AppCompatActivity {
     Button registerButton;
     TextView loginLink;
 
-    // Règles mot de passe
     TextView ruleLength, ruleLowercase, ruleUppercase, ruleDigit, ruleSpecial;
+
+    // Retrofit
+    AuthApi authApi = RetrofitClient
+            .getRetrofitInstance()
+            .create(AuthApi.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+
+        Log.d(TAG, "onCreate() appelé");
 
         // Bind views
         roleGroup = findViewById(R.id.roleRadioGroup);
@@ -70,7 +78,6 @@ public class SignupActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         loginLink = findViewById(R.id.loginLink);
 
-        // Password rules
         ruleLength = findViewById(R.id.ruleLength);
         ruleLowercase = findViewById(R.id.ruleLowercase);
         ruleUppercase = findViewById(R.id.ruleUppercase);
@@ -86,8 +93,9 @@ public class SignupActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"-- Choisir --", "Informatique", "Maths", "Physique", "Management"}));
 
-        // Changement de rôle
+        // Role change
         roleGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            Log.d(TAG, "Role changé : " + checkedId);
             if (checkedId == R.id.studentRadioButton) {
                 studentSection.setVisibility(View.VISIBLE);
                 teacherSection.setVisibility(View.GONE);
@@ -97,27 +105,30 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Validation mot de passe en temps réel
         passwordEditText.addTextChangedListener(passwordWatcher);
 
-        // Inscription
         registerButton.setOnClickListener(v -> {
-            if (validateFields()) {
+            Log.d(TAG, "Bouton S'inscrire cliqué");
+
+            boolean valid = validateFields();
+            Log.d(TAG, "Validation formulaire = " + valid);
+
+            if (valid) {
                 registerUser();
+            } else {
+                Log.d(TAG, "Formulaire invalide, registerUser() NON appelé");
             }
         });
 
         loginLink.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(SignupActivity.this, MainActivity.class));
         });
-
     }
-
 
     /* =======================
        PASSWORD VALIDATION
        ======================= */
+
     private final TextWatcher passwordWatcher = new TextWatcher() {
         @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -149,6 +160,7 @@ public class SignupActivity extends AppCompatActivity {
     /* =======================
        FORM VALIDATION
        ======================= */
+
     private boolean validateFields() {
 
         if (TextUtils.isEmpty(nomEditText.getText())) {
@@ -168,8 +180,7 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         String expectedEmail = prenomEditText.getText().toString().trim().toLowerCase()
-                + "." +
-                nomEditText.getText().toString().trim().toLowerCase()
+                + "." + nomEditText.getText().toString().trim().toLowerCase()
                 + "@uit.ac.ma";
 
         if (!email.equals(expectedEmail)) {
@@ -208,15 +219,13 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
-    // Initialiser Retrofit
-    AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
-            .create(AuthApi.class);
-
     /* =======================
        API CALL
        ======================= */
+
     private void registerUser() {
+
+        Log.d(TAG, "registerUser() APPELÉ");
 
         UserRequest request = new UserRequest();
         request.setNom(nomEditText.getText().toString().trim());
@@ -234,23 +243,32 @@ public class SignupActivity extends AppCompatActivity {
             request.setDepartement(departementSpinner.getSelectedItem().toString());
         }
 
+        Log.d(TAG, "Envoi requête Retrofit avec email = " + request.getEmail());
+
         registerButton.setEnabled(false);
         registerButton.setText("Inscription...");
-
-
 
         authApi.registerUser(request).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+
+                Log.d(TAG, "onResponse() appelé");
+                Log.d(TAG, "HTTP code = " + response.code());
+                Log.d(TAG, "isSuccessful = " + response.isSuccessful());
+
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
 
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d(TAG, "Réponse OK : " + response.body().getMessage());
+
                     Toast.makeText(SignupActivity.this,
                             response.body().getMessage(),
                             Toast.LENGTH_LONG).show();
+
                     if (response.body().isSuccess()) finish();
                 } else {
+                    Log.e(TAG, "Erreur serveur");
                     Toast.makeText(SignupActivity.this,
                             "Erreur serveur",
                             Toast.LENGTH_LONG).show();
@@ -259,10 +277,16 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
+
+                Log.e(TAG, "onFailure() appelé");
+                Log.e(TAG, "Type erreur = " + t.getClass().getName());
+                Log.e(TAG, "Message = " + t.getMessage(), t);
+
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
+
                 Toast.makeText(SignupActivity.this,
-                        "Erreur réseau",
+                        "Erreur réseau : " + t.getClass().getSimpleName(),
                         Toast.LENGTH_LONG).show();
             }
         });
