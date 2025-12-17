@@ -21,7 +21,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
-import com.example.frontend.api.RetrofitClient;
+import com.example.frontend.api.RetrofitClientAuth;
 import com.example.frontend.model.UserRequest;
 import com.example.frontend.model.UserResponse;
 import retrofit2.Call;
@@ -209,8 +209,8 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // Initialiser Retrofit
-    AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
+    AuthApi authApi = RetrofitClientAuth
+            .getInstance()
             .create(AuthApi.class);
 
     /* =======================

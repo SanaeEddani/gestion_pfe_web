@@ -1,6 +1,5 @@
 package com.example.frontend;
-
-
+import android.content.SharedPreferences;
 
 
 import android.content.Intent;
@@ -14,7 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
-import com.example.frontend.api.RetrofitClient;
+import com.example.frontend.api.RetrofitClientAuth;
 import com.example.frontend.model.JwtResponse;
 import com.example.frontend.model.LoginRequest;
 
@@ -22,6 +21,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+
+
 
 
 
@@ -53,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialiser Retrofit
-        AuthApi authApi = RetrofitClient
-                .getRetrofitInstance()
+        AuthApi authApi = RetrofitClientAuth
+                .getInstance()
                 .create(AuthApi.class);
 
 
@@ -78,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
                         int role = response.body().getRoleInt();
                         String token = response.body().getToken();
 
+                        SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
+                        prefs.edit().putString("token", token).apply();
 
                         // Stocker token si besoin
                         // SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);

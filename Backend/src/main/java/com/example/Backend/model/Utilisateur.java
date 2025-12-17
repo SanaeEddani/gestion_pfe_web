@@ -2,6 +2,8 @@ package com.example.Backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 @Table(name = "utilisateurs")
@@ -47,6 +49,19 @@ public class Utilisateur {
     @ManyToOne(optional = false)
     @JoinColumn(name = "role_id", nullable = false, updatable = false)
     private Role role;
+
+    // =======================
+// RELATIONS AVEC PROJET
+// =======================
+
+    // Étudiant → 1 seul projet
+    @OneToOne(mappedBy = "etudiant")
+    private Projet projet;
+
+    // Encadrant → plusieurs projets
+    @OneToMany(mappedBy = "encadrant")
+    private List<Projet> projetsEncadres;
+
 
     // =======================
     // GETTERS & SETTERS
@@ -139,4 +154,21 @@ public class Utilisateur {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public Projet getProjet() {
+        return projet;
+    }
+
+    public void setProjet(Projet projet) {
+        this.projet = projet;
+    }
+
+    public List<Projet> getProjetsEncadres() {
+        return projetsEncadres;
+    }
+
+    public void setProjetsEncadres(List<Projet> projetsEncadres) {
+        this.projetsEncadres = projetsEncadres;
+    }
+
 }
