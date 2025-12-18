@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="status_student">
+        <item>Tous</item>
+        <item>Affecté</item>
+        <item>Non affecté</item>
+    </string-array>
+</resources>

@@ -39,15 +39,22 @@ public class AdminService {
         dto.setEmail(u.getEmail());
         dto.setFiliere(u.getFiliere());
 
+        // Apogée
+        if (u.getAppogee() != null) {
+            dto.setApogee(u.getAppogee().getNumAppogee());
+        }
+
+        // Affectation
         boolean affecte = projetRepository.findByEtudiant_Id(u.getId()).isPresent();
         dto.setAffecte(affecte);
 
         projetRepository.findByEtudiant_Id(u.getId()).ifPresent(p ->
-                dto.setEncadrantNom(p.getEncadrant().getNom())
+                dto.setEncadrantNom(p.getEncadrant().getNom() + " " + p.getEncadrant().getPrenom())
         );
 
         return dto;
     }
+
 
     /* ===================== ENCADRANTS ===================== */
 

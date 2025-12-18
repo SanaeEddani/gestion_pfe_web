@@ -7,9 +7,14 @@ public class StudentAdminDTO {
     private String prenom;
     private String email;
     private String filiere;
+    private String apogee;  // ← AJOUTER CE CHAMP
     private boolean affecte;
     private String encadrantNom;
 
+
+
+    public String getApogee() { return apogee; }
+    public void setApogee(String apogee) { this.apogee = apogee; }
     public Long getId() {
         return id;
     }

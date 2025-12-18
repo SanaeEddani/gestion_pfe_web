@@ -6,6 +6,7 @@ public class StudentAdmin {
     public String nom;
     public String prenom;
     public String email;
+    public String apogee;
     public String filiere;
     public boolean affecte;
     public String encadrantNom;

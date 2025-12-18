@@ -1,10 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- ===== ZONE FILTRAGE (NOUVELLE) ===== -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/editFilterName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nom / Prénom" />
+
+        <EditText
+            android:id="@+id/editFilterApogee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apogée"
+            android:inputType="number" />
+        <TextView
+            android:id="@+id/textStatusLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Statut :"
+            android:textStyle="bold"
+            android:layout_marginTop="6dp"/>
+
+
+        <Spinner
+            android:id="@+id/spinnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- ===== LISTE DES ÉTUDIANTS (INCHANGÉE) ===== -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerStudents"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</FrameLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>
