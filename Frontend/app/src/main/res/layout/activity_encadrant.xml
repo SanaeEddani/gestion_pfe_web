@@ -4,22 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="12dp"
+    android:background="@color/white">
 
     <TextView
-        android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Encadrant - Test API"
+        android:text="Liste des étudiants disponibles"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:paddingBottom="12dp"/>
+        android:textColor="@color/primaryDarkBlue"
+        android:paddingBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/txtStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chargement des étudiants..."
-        android:textSize="16sp"/>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerEtudiants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>
