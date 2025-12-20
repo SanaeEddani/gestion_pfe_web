@@ -1,9 +1,7 @@
 package com.example.frontend;
 
-
-
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,15 +19,8 @@ import com.example.frontend.model.LoginRequest;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-
-
-
 
 public class MainActivity extends AppCompatActivity {
-
-    private Retrofit retrofit;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,24 +33,21 @@ public class MainActivity extends AppCompatActivity {
         TextView tvRegister = findViewById(R.id.tvRegister);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        tvRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SignupActivity.class);
-            startActivity(intent);
-        });
+        tvRegister.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, SignupActivity.class))
+        );
 
-        tvForgotPassword.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ForgotPasswordActivity.class);
-            startActivity(intent);
-        });
+        tvForgotPassword.setOnClickListener(v ->
+                startActivity(new Intent(MainActivity.this, ForgotPasswordActivity.class))
+        );
 
-        // Initialiser Retrofit
+        // 🔹 API Auth
         AuthApi authApi = RetrofitClient
                 .getRetrofitInstance()
                 .create(AuthApi.class);
 
-
-
         btnLogin.setOnClickListener(v -> {
+
             String userEmail = email.getText().toString().trim();
             String userPassword = password.getText().toString().trim();
 
@@ -68,46 +56,82 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Créer l'objet LoginRequest
             LoginRequest request = new LoginRequest(userEmail, userPassword);
 
-            authApi.login(request).enqueue(new Callback<JwtResponse>()  {
+            authApi.login(request).enqueue(new Callback<JwtResponse>() {
+
                 @Override
-                public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
+                public void onResponse(
+                        Call<JwtResponse> call,
+                        Response<JwtResponse> response
+                ) {
+
                     if (response.isSuccessful() && response.body() != null) {
-                        int role = response.body().getRoleInt();
-                        String token = response.body().getToken();
 
+                        JwtResponse jwt = response.body();
 
-                        // Stocker token si besoin
-                        // SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
-                        // prefs.edit().putString("token", token).apply();
+                        int userId = jwt.getId();          // ✅ ID utilisateur
+                        int role = jwt.getRoleInt();       // ✅ rôle
+                        String token = jwt.getToken();     // ✅ JWT
 
-                        // Redirection selon rôle
+                        // ✅ SAUVEGARDE DANS SharedPreferences
+                        SharedPreferences sp =
+                                getSharedPreferences("auth", MODE_PRIVATE);
+
+                        sp.edit()
+                                .putInt("user_id", userId)
+                                .putInt("role", role)
+                                .putString("token", token)
+                                .apply();
+
+                        // 🔁 Redirection selon rôle
                         switch (role) {
                             case 1:
-                                startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                                startActivity(new Intent(
+                                        MainActivity.this,
+                                        AdminActivity.class
+                                ));
                                 break;
+
                             case 2:
-                                startActivity(new Intent(MainActivity.this, StudentActivity.class));
+                                startActivity(new Intent(
+                                        MainActivity.this,
+                                        StudentActivity.class
+                                ));
                                 break;
+
                             case 3:
-                                startActivity(new Intent(MainActivity.this, EncadrantActivity.class));
+                                startActivity(new Intent(
+                                        MainActivity.this,
+                                        EncadrantActivity.class
+                                ));
                                 break;
 
                             default:
-                                Toast.makeText(MainActivity.this, "Rôle inconnu",Toast.LENGTH_SHORT).show();
-                                break;
+                                Toast.makeText(
+                                        MainActivity.this,
+                                        "Rôle inconnu",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                return;
                         }
 
-                        finish(); // fermer LoginActivity
+                        finish(); // fermer écran login
+
                     } else {
-                        Toast.makeText(MainActivity.this, "Email ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(
+                                MainActivity.this,
+                                "Email ou mot de passe incorrect",
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
                 }
 
                 @Override
-                public void onFailure(Call<JwtResponse> call, Throwable t) {
+                public void onFailure(
+                        Call<JwtResponse> call,
+                        Throwable t
+                ) {
                     showPopup("Erreur réseau", t.getMessage());
                 }
             });
@@ -121,11 +145,4 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", null)
                 .show();
     }
-
-
-
-
-
-
-
 }

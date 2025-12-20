@@ -1,19 +1,40 @@
 package com.example.frontend.model;
 
 public class JwtResponse {
+
     private String token;
-    private String role; // String pour correspondre au backend
+    private String role; // admin / etudiant / encadrant
+    private int id;      // ✅ ID utilisateur (AJOUT)
 
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
+    public String getToken() {
+        return token;
+    }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-    // Méthode utilitaire pour récupérer role en int
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public int getId() {            // ✅ NOUVEAU
+        return id;
+    }
+
+    public void setId(int id) {     // ✅ NOUVEAU
+        this.id = id;
+    }
+
+    // Méthode utilitaire : rôle en int
     public int getRoleInt() {
-        if (getRole() == null) return 0;
-        switch (getRole().toLowerCase()) {
+        if (role == null) return 0;
+
+        switch (role.toLowerCase()) {
             case "admin":
                 return 1;
             case "etudiant":
