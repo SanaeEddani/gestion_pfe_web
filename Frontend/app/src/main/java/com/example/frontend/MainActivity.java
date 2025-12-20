@@ -1,9 +1,7 @@
 package com.example.frontend;
 
-
-
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,15 +19,8 @@ import com.example.frontend.model.LoginRequest;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-
-
-
 
 public class MainActivity extends AppCompatActivity {
-
-    private Retrofit retrofit;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
                 .getRetrofitInstance()
                 .create(AuthApi.class);
 
-
-
         btnLogin.setOnClickListener(v -> {
             String userEmail = email.getText().toString().trim();
             String userPassword = password.getText().toString().trim();
@@ -71,35 +60,57 @@ public class MainActivity extends AppCompatActivity {
             // Créer l'objet LoginRequest
             LoginRequest request = new LoginRequest(userEmail, userPassword);
 
-            authApi.login(request).enqueue(new Callback<JwtResponse>()  {
+            authApi.login(request).enqueue(new Callback<JwtResponse>() {
                 @Override
                 public void onResponse(Call<JwtResponse> call, Response<JwtResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        int role = response.body().getRoleInt();
-                        String token = response.body().getToken();
+                        JwtResponse jwtResponse = response.body();
+                        String token = jwtResponse.getToken();
+                        String roleString = jwtResponse.getRole();
+                        int role = jwtResponse.getRoleInt();
 
+                        // IMPORTANT : Récupérer l'ID utilisateur
+                        // Si votre API ne retourne pas l'ID dans JwtResponse,
+                        // vous devez faire un appel API supplémentaire pour obtenir l'ID
+                        int userId = jwtResponse.getUserId();
 
-                        // Stocker token si besoin
-                        // SharedPreferences prefs = getSharedPreferences("app", MODE_PRIVATE);
-                        // prefs.edit().putString("token", token).apply();
+                        if (userId <= 0) {
+                            // Si l'ID n'est pas dans la réponse, essayez de le récupérer
+                            // Vous devrez peut-être créer une API pour obtenir l'ID par email
+                            // Pour l'instant, on utilise une valeur par défaut
+                            userId = getUserIdFromEmail(userEmail); // Méthode à implémenter
+                        }
+
+                        // Stocker les informations utilisateur
+                        SharedPreferences.Editor editor = getSharedPreferences("user_session", MODE_PRIVATE).edit();
+                        editor.putString("token", token);
+                        editor.putString("email", userEmail);
+                        editor.putString("role", roleString);
+                        editor.putInt("role_int", role);
+                        editor.putInt("user_id", userId); // STOCKER L'ID
+                        editor.apply();
+
+                        Toast.makeText(MainActivity.this, "Connexion réussie!", Toast.LENGTH_SHORT).show();
 
                         // Redirection selon rôle
                         switch (role) {
-                            case 1:
+                            case 1: // Admin
                                 startActivity(new Intent(MainActivity.this, AdminActivity.class));
                                 break;
-                            case 2:
-                                startActivity(new Intent(MainActivity.this, StudentActivity.class));
+                            case 2: // Étudiant
+                                Intent studentIntent = new Intent(MainActivity.this, EtudiantProfileActivity.class);
+                                studentIntent.putExtra("STUDENT_ID", userId);
+                                startActivity(studentIntent);
                                 break;
-                            case 3:
+                            case 3: // Encadrant/Cadre
                                 startActivity(new Intent(MainActivity.this, CadreActivity.class));
                                 break;
                             default:
-                                Toast.makeText(MainActivity.this, "Rôle inconnu",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Rôle inconnu", Toast.LENGTH_SHORT).show();
                                 break;
                         }
 
-                        finish(); // fermer LoginActivity
+                        finish(); // fermer MainActivity
                     } else {
                         Toast.makeText(MainActivity.this, "Email ou mot de passe incorrect", Toast.LENGTH_SHORT).show();
                     }
@@ -113,6 +124,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Méthode temporaire pour obtenir l'ID - À REMPLACER par un appel API réel
+    private int getUserIdFromEmail(String email) {
+        // Ceci est une solution temporaire
+        // Dans un cas réel, vous devriez avoir une API qui retourne l'ID utilisateur par email
+        // Par exemple : apiService.getUserIdByEmail(email)
+
+        // Pour le moment, retournez une valeur par défaut
+        // ou utilisez SharedPreferences si vous avez déjà enregistré l'ID
+        SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+        return prefs.getInt("user_id", 1); // Valeur par défaut 1 pour les tests
+    }
+
     private void showPopup(String title, String message) {
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle(title)
@@ -121,10 +144,38 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    // OPTIONNEL : Si vous voulez garder la redirection automatique
+    // Commentez cette méthode si vous voulez toujours voir l'écran de login
+    /*
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkIfAlreadyLoggedIn();
+    }
 
+    private void checkIfAlreadyLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
 
+        if (prefs.contains("token") && prefs.contains("user_id")) {
+            int userId = prefs.getInt("user_id", -1);
+            int role = prefs.getInt("role_int", -1);
+            String userEmail = prefs.getString("email", "");
 
-
-
-
+            if (userId > 0 && role != -1 && !userEmail.isEmpty()) {
+                if (role == 2) { // Étudiant
+                    Intent intent = new Intent(MainActivity.this, StudentDashboardActivity.class);
+                    intent.putExtra("STUDENT_ID", userId);
+                    startActivity(intent);
+                    finish();
+                } else if (role == 1) { // Admin
+                    startActivity(new Intent(MainActivity.this, AdminActivity.class));
+                    finish();
+                } else if (role == 3) { // Cadre
+                    startActivity(new Intent(MainActivity.this, CadreActivity.class));
+                    finish();
+                }
+            }
+        }
+    }
+    */
 }

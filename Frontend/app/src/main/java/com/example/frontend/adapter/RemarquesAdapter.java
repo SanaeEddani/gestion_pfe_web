@@ -1,4 +1,4 @@
-package adapter;
+package com.example.frontend.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,11 +34,11 @@ public class RemarquesAdapter extends RecyclerView.Adapter<RemarquesAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Remarque remarque = remarques.get(position);
 
-        // Vérifier si les méthodes existent dans votre classe Remarque
         if (remarque != null) {
+            // Utilisez les bons noms de méthodes (getContenu() pas getContent())
             holder.tvContenu.setText(remarque.getContenu() != null ? remarque.getContenu() : "");
 
-            String encadrantNom = remarque.getEncadrantNom() != null ?
+            String encadrantNom = (remarque.getEncadrantNom() != null) ?
                     "Par: " + remarque.getEncadrantNom() : "Par: Non spécifié";
             holder.tvEncadrant.setText(encadrantNom);
 
@@ -55,13 +55,13 @@ public class RemarquesAdapter extends RecyclerView.Adapter<RemarquesAdapter.View
         return remarques != null ? remarques.size() : 0;
     }
 
-    // Classe ViewHolder interne
+    // Classe ViewHolder CORRIGÉE
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvContenu, tvEncadrant, tvDate;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialiser les vues
+            // CORRECTION : les IDs doivent correspondre à votre XML
             tvContenu = itemView.findViewById(R.id.tv_contenu);
             tvEncadrant = itemView.findViewById(R.id.tv_encadrant);
             tvDate = itemView.findViewById(R.id.tv_date);

@@ -1,52 +1,66 @@
 package com.example.frontend;
 
-import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
+
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
+import com.example.frontend.R;
+import com.example.frontend.api.ApiClient;
+import com.example.frontend.api.ApiService;
+import com.example.frontend.model.EtudiantProfile;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.frontend.databinding.ActivityEtudiantProfileBinding;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EtudiantProfileActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityEtudiantProfileBinding binding;
+    TextView tvNom, tvPrenom, tvEmail, tvFiliere, tvDepartement, tvAppogee, tvRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_etudiant_profile);
 
-        binding = ActivityEtudiantProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        tvNom = findViewById(R.id.tvNom);
+        tvPrenom = findViewById(R.id.tvPrenom);
+        tvEmail = findViewById(R.id.tvEmail);
+        tvFiliere = findViewById(R.id.tvFiliere);
+        tvDepartement = findViewById(R.id.tvDepartement);
+        tvAppogee = findViewById(R.id.tvAppogee);
+        tvRole = findViewById(R.id.tvRole);
 
-        setSupportActionBar(binding.toolbar);
+        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
+        String token = prefs.getString("token", "");
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_etudiant_profile);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        apiService.getEtudiantProfile("Bearer " + token)
+                .enqueue(new Callback<EtudiantProfile>() {
+                    @Override
+                    public void onResponse(Call<EtudiantProfile> call, Response<EtudiantProfile> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            EtudiantProfile e = response.body();
+                            tvNom.setText(e.getNom());
+                            tvPrenom.setText(e.getPrenom());
+                            tvEmail.setText(e.getEmail());
+                        } else {
+                            Toast.makeText(EtudiantProfileActivity.this,
+                                    "Profil non trouvé", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
+                    @Override
+                    public void onFailure(Call<EtudiantProfile> call, Throwable t) {
+                        Toast.makeText(EtudiantProfileActivity.this,
+                                "Erreur réseau", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_etudiant_profile);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
     }
 }
