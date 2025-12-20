@@ -14,8 +14,10 @@ public interface EncadrantApi {
 
     @GET("api/encadrant/etudiants")
     Call<List<EtudiantProjetDTO>> getEtudiants(
-            @Query("sujet") String sujet
+            @Query("filiere") String filiere
     );
+
+
 
     @POST("api/encadrant/encadrer/{projetId}")
     Call<String> encadrer(
