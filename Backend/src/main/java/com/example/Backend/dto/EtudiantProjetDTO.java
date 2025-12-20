@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class EtudiantProjetDTO {
 
     private Integer projetId;
-    private Long etudiantId;   // 🔴 Long ici
+    private Integer etudiantId;
     private String nom;
     private String prenom;
     private String filiere;
@@ -14,10 +14,9 @@ public class EtudiantProjetDTO {
     private LocalDate dateDebut;
     private LocalDate dateFin;
 
-    // ⚠️ CONSTRUCTEUR EXACTEMENT ALIGNÉ AVEC JPQL
     public EtudiantProjetDTO(
             Integer projetId,
-            Long etudiantId,      // 🔴 Long ici
+            Integer etudiantId,
             String nom,
             String prenom,
             String filiere,
@@ -39,7 +38,7 @@ public class EtudiantProjetDTO {
 
     // getters
     public Integer getProjetId() { return projetId; }
-    public Long getEtudiantId() { return etudiantId; }
+    public Integer getEtudiantId() { return etudiantId; }
     public String getNom() { return nom; }
     public String getPrenom() { return prenom; }
     public String getFiliere() { return filiere; }

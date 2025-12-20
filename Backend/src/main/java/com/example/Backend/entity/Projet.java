@@ -8,10 +8,25 @@ import java.time.LocalDateTime;
 @Table(name = "projets")
 public class Projet {
 
+    /* =====================
+       PRIMARY KEY
+       ===================== */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    /* =====================
+       FK SIMPLES (PAS DE RELATION)
+       ===================== */
+    @Column(name = "etudiant_id", nullable = false)
+    private Integer etudiantId;
+
+    @Column(name = "encadrant_id")
+    private Integer encadrantId;
+
+    /* =====================
+       CHAMPS METIER
+       ===================== */
     private String sujet;
 
     @Column(columnDefinition = "TEXT")
@@ -19,32 +34,87 @@ public class Projet {
 
     private String entreprise;
 
-    private LocalDate date_debut;
-    private LocalDate date_fin;
+    @Column(name = "date_debut")
+    private LocalDate dateDebut;
 
-    @Column(updatable = false)
-    private LocalDateTime created_at;
+    @Column(name = "date_fin")
+    private LocalDate dateFin;
 
-    @Column(name = "etudiant_id", nullable = false)
-    private Integer etudiantId;
-
-    @Column(name = "encadrant_id")
-    private Integer encadrantId;
+    /* =====================
+       AUDIT
+       ===================== */
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        this.created_at = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
-    public Integer getId() { return id; }
-    public String getSujet() { return sujet; }
-    public void setSujet(String sujet) { this.sujet = sujet; }
+    /* =====================
+       GETTERS / SETTERS
+       ===================== */
+    public Integer getId() {
+        return id;
+    }
 
-    public String getEntreprise() { return entreprise; }
-    public LocalDate getDate_debut() { return date_debut; }
-    public LocalDate getDate_fin() { return date_fin; }
+    public Integer getEtudiantId() {
+        return etudiantId;
+    }
 
-    public Integer getEtudiantId() { return etudiantId; }
-    public Integer getEncadrantId() { return encadrantId; }
-    public void setEncadrantId(Integer encadrantId) { this.encadrantId = encadrantId; }
+    public void setEtudiantId(Integer etudiantId) {
+        this.etudiantId = etudiantId;
+    }
+
+    public Integer getEncadrantId() {
+        return encadrantId;
+    }
+
+    public void setEncadrantId(Integer encadrantId) {
+        this.encadrantId = encadrantId;
+    }
+
+    public String getSujet() {
+        return sujet;
+    }
+
+    public void setSujet(String sujet) {
+        this.sujet = sujet;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getEntreprise() {
+        return entreprise;
+    }
+
+    public void setEntreprise(String entreprise) {
+        this.entreprise = entreprise;
+    }
+
+    public LocalDate getDateDebut() {
+        return dateDebut;
+    }
+
+    public void setDateDebut(LocalDate dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+
+    public LocalDate getDateFin() {
+        return dateFin;
+    }
+
+    public void setDateFin(LocalDate dateFin) {
+        this.dateFin = dateFin;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
