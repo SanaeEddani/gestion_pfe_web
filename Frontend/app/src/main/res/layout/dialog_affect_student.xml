@@ -6,9 +6,9 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/editEncadrantId"
-        android:hint="ID de l'encadrant"
-        android:inputType="number"
+        android:id="@+id/editCodeProf"
+        android:hint="Code Prof"
+        android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

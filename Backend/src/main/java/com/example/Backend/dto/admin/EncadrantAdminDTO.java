@@ -8,6 +8,7 @@ public class EncadrantAdminDTO {
     private String nom;
     private String prenom;
     private String email;
+    private String codeProf; // <-- Ajouté
     private String departement;
     private List<String> etudiants;
 
@@ -38,6 +39,15 @@ public class EncadrantAdminDTO {
     public String getEmail() {
         return email;
     }
+    // getters et setters
+    public String getCodeProf() {
+        return codeProf;
+    }
+
+    public void setCodeProf(String codeProf) {
+        this.codeProf = codeProf;
+    }
+
 
     public void setEmail(String email) {
         this.email = email;

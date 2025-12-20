@@ -1,7 +1,6 @@
 package com.example.frontend.model;
 
 public class AffectationRequest {
-
     public Long etudiantId;
     public Long encadrantId;
 
@@ -10,3 +9,5 @@ public class AffectationRequest {
         this.encadrantId = encadrantId;
     }
 }
+
+

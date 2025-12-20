@@ -8,6 +8,7 @@ public class EncadrantAdmin {
     public String nom;
     public String prenom;
     public String email;
+    public String codeProf;   // <-- ajouté
     public String departement;
     public List<String> etudiants;
 }

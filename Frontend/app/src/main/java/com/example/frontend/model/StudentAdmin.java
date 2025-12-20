@@ -9,5 +9,6 @@ public class StudentAdmin {
     public String apogee;
     public String filiere;
     public boolean affecte;
+    public String codeProf;
     public String encadrantNom;
 }

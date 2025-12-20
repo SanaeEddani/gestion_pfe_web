@@ -45,15 +45,20 @@ public class AdminService {
         }
 
         // Affectation
-        boolean affecte = projetRepository.findByEtudiant_Id(u.getId()).isPresent();
-        dto.setAffecte(affecte);
-
-        projetRepository.findByEtudiant_Id(u.getId()).ifPresent(p ->
-                dto.setEncadrantNom(p.getEncadrant().getNom() + " " + p.getEncadrant().getPrenom())
-        );
+        projetRepository.findByEtudiant_Id(u.getId()).ifPresentOrElse(p -> {
+            if (p.getEncadrant() != null) {
+                dto.setAffecte(true);  // Affecté seulement si encadrant existe
+                dto.setEncadrantNom(p.getEncadrant().getNom() + " " + p.getEncadrant().getPrenom());
+            } else {
+                dto.setAffecte(false); // Projet sans encadrant → pas affecté
+                dto.setEncadrantNom(null);
+            }
+        }, () -> dto.setAffecte(false)); // Pas de projet → pas affecté
 
         return dto;
     }
+
+
 
 
     /* ===================== ENCADRANTS ===================== */
@@ -73,6 +78,9 @@ public class AdminService {
         dto.setEmail(e.getEmail());
         dto.setDepartement(e.getDepartement());
 
+        // Récupérer le codeProf en String
+        dto.setCodeProf(e.getCodeProf() != null ? e.getCodeProf().getCodeProf() : null);
+
         List<String> etudiants = e.getProjetsEncadres()
                 .stream()
                 .map(p -> p.getEtudiant().getNom())
@@ -82,18 +90,26 @@ public class AdminService {
         return dto;
     }
 
+
+
     /* ===================== AFFECTATION ===================== */
 
     public void affecter(AffectationRequestDTO request) {
         Utilisateur etudiant = utilisateurRepository.findById(request.getEtudiantId()).orElseThrow();
         Utilisateur encadrant = utilisateurRepository.findById(request.getEncadrantId()).orElseThrow();
 
-        Projet projet = new Projet();
-        projet.setEtudiant(etudiant);
-        projet.setEncadrant(encadrant);
+        // Vérifier si un projet existe déjà
+        Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId())
+                .orElseGet(() -> {
+                    Projet p = new Projet();
+                    p.setEtudiant(etudiant);
+                    return p;
+                });
 
+        projet.setEncadrant(encadrant); // affecte l'étudiant à l'encadrant
         projetRepository.save(projet);
     }
+
 
     public void reaffecter(AffectationRequestDTO request) {
         Projet projet = projetRepository.findByEtudiant_Id(request.getEtudiantId()).orElseThrow();
