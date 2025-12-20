@@ -1,8 +1,9 @@
 package com.example.Backend.dto;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class EtudiantProjetDTO {
+public class EtudiantProjetDTO implements Serializable {
 
     private Integer projetId;
     private Integer etudiantId;
