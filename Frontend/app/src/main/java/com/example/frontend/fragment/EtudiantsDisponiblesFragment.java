@@ -57,86 +57,82 @@ public class EtudiantsDisponiblesFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 🔹 1️⃣ RÉCUPÉRATION ID ENCADRANT
+        // 🔹 Récupération ID encadrant
         encadrantId = getEncadrantId();
-
-        // 🔥 AJOUT IMPORTANT : vérifier ce que Android a vraiment
-        Toast.makeText(
-                getContext(),
-                "EncadrantId = " + encadrantId,
-                Toast.LENGTH_LONG
-        ).show();
 
         api = RetrofitClient.getRetrofitInstance()
                 .create(EncadrantApi.class);
 
-        adapter = new EtudiantAdapter(etudiants, etudiant -> {
+        // ✅ ADAPTER EN MODE "ETUDIANTS DISPONIBLES"
+        adapter = new EtudiantAdapter(
+                etudiants,
+                EtudiantAdapter.MODE_ETUDIANTS_DISPO,
+                etudiant -> {
 
-            // 🔴 Sécurité
-            if (encadrantId == -1) {
-                Toast.makeText(
-                        getContext(),
-                        "Encadrant non identifié",
-                        Toast.LENGTH_SHORT
-                ).show();
-                return;
-            }
-
-            // 🔹 2️⃣ BODY JSON EXACT ATTENDU PAR LE BACKEND
-            EncadrerRequest body = new EncadrerRequest(
-                    etudiant.getProjetId(),
-                    encadrantId
-            );
-
-            api.encadrer(body).enqueue(new Callback<Void>() {
-
-                @Override
-                public void onResponse(
-                        Call<Void> call,
-                        Response<Void> response
-                ) {
-                    if (response.isSuccessful()) {
-
-                        etudiants.remove(etudiant);
-                        adapter.notifyDataSetChanged();
-
+                    if (encadrantId == -1) {
                         Toast.makeText(
                                 getContext(),
-                                "Étudiant encadré ✅",
+                                "Encadrant non identifié",
                                 Toast.LENGTH_SHORT
                         ).show();
-
-                    } else if (response.code() == 409) {
-
-                        Toast.makeText(
-                                getContext(),
-                                "Projet déjà encadré",
-                                Toast.LENGTH_SHORT
-                        ).show();
-
-                    } else {
-
-                        Toast.makeText(
-                                getContext(),
-                                "Erreur serveur : " + response.code(),
-                                Toast.LENGTH_SHORT
-                        ).show();
+                        return;
                     }
-                }
 
-                @Override
-                public void onFailure(
-                        Call<Void> call,
-                        Throwable t
-                ) {
-                    Toast.makeText(
-                            getContext(),
-                            "Erreur réseau",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    EncadrerRequest body = new EncadrerRequest(
+                            etudiant.getProjetId(),
+                            encadrantId
+                    );
+
+                    api.encadrer(body).enqueue(new Callback<Void>() {
+
+                        @Override
+                        public void onResponse(
+                                Call<Void> call,
+                                Response<Void> response
+                        ) {
+                            if (response.isSuccessful()) {
+
+                                etudiants.remove(etudiant);
+                                adapter.notifyDataSetChanged();
+
+                                Toast.makeText(
+                                        getContext(),
+                                        "Étudiant encadré ✅",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                            } else if (response.code() == 409) {
+
+                                Toast.makeText(
+                                        getContext(),
+                                        "Projet déjà encadré",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                            } else {
+
+                                Toast.makeText(
+                                        getContext(),
+                                        "Erreur serveur : " + response.code(),
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(
+                                Call<Void> call,
+                                Throwable t
+                        ) {
+                            Toast.makeText(
+                                    getContext(),
+                                    "Erreur réseau",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    });
                 }
-            });
-        });
+        );
 
         recyclerView.setAdapter(adapter);
 

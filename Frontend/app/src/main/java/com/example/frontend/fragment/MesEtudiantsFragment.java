@@ -1,6 +1,7 @@
 package com.example.frontend.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
+import com.example.frontend.DetailEtudiantActivity;
 import com.example.frontend.adapter.EtudiantAdapter;
 import com.example.frontend.api.EncadrantApi;
 import com.example.frontend.api.RetrofitClient;
@@ -51,27 +53,55 @@ public class MesEtudiantsFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerMesEtudiants);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 🔹 Récupération ID encadrant connecté
+        // 🔹 ID encadrant connecté
         encadrantId = getEncadrantId();
-
-        Toast.makeText(
-                getContext(),
-                "Mes étudiants – encadrantId = " + encadrantId,
-                Toast.LENGTH_LONG
-        ).show();
 
         api = RetrofitClient.getRetrofitInstance()
                 .create(EncadrantApi.class);
 
-        adapter = new EtudiantAdapter(etudiants, etudiant -> {
-            // 👉 Ici PAS de bouton Encadrer
-        });
+        adapter = new EtudiantAdapter(
+                etudiants,
+                EtudiantAdapter.MODE_MES_ETUDIANTS,
+                etudiant -> {
+
+                    // ✅ NAVIGATION VERS DETAIL (avec les infos)
+                    Intent intent = new Intent(
+                            requireContext(),
+                            DetailEtudiantActivity.class
+                    );
+
+                    intent.putExtra("projetId", etudiant.getProjetId());
+                    intent.putExtra("nom", etudiant.getNom());
+                    intent.putExtra("prenom", etudiant.getPrenom());
+                    intent.putExtra("filiere", etudiant.getFiliere());
+                    intent.putExtra("sujet", etudiant.getSujet());
+                    intent.putExtra("entreprise", etudiant.getEntreprise());
+                    intent.putExtra(
+                            "dateDebut",
+                            String.valueOf(etudiant.getDateDebut())
+                    );
+                    intent.putExtra(
+                            "dateFin",
+                            String.valueOf(etudiant.getDateFin())
+                    );
+
+                    startActivity(intent);
+                }
+        );
 
         recyclerView.setAdapter(adapter);
 
+        // 🔥 Chargement initial
         chargerMesEtudiants();
 
         return view;
+    }
+
+    // ✅ Refresh automatique
+    @Override
+    public void onResume() {
+        super.onResume();
+        chargerMesEtudiants();
     }
 
     private void chargerMesEtudiants() {
