@@ -11,18 +11,25 @@ import java.util.List;
 public interface ProjetRepository extends JpaRepository<Projet, Integer> {
 
     @Query("""
-        SELECT new com.example.Backend.dto.EtudiantProjetDTO(
-            p.id,
-            p.etudiantId,
-            u.nom,
-            u.prenom,
-            u.filiere,
-            p.sujet
-        )
-        FROM Projet p, Utilisateur u
-        WHERE u.id = p.etudiantId
-        AND p.encadrantId IS NULL
-        AND (:sujet IS NULL OR p.sujet LIKE %:sujet%)
-    """)
-    List<EtudiantProjetDTO> findEtudiantsDisponibles(@Param("sujet") String sujet);
+    SELECT new com.example.Backend.dto.EtudiantProjetDTO(
+        p.id,
+        u.id,
+        u.nom,
+        u.prenom,
+        u.filiere,
+        p.sujet,
+        p.entreprise,
+        p.date_debut,
+        p.date_fin
+    )
+    FROM Projet p
+    JOIN Utilisateur u ON u.id = p.etudiantId
+    WHERE p.encadrantId IS NULL
+    AND (:filiere IS NULL OR u.filiere = :filiere)
+""")
+    List<EtudiantProjetDTO> findEtudiantsDisponibles(
+            @Param("filiere") String filiere
+    );
+
+
 }

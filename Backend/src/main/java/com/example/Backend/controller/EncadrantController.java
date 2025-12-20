@@ -2,10 +2,8 @@ package com.example.Backend.controller;
 
 import com.example.Backend.dto.EtudiantProjetDTO;
 import com.example.Backend.entity.Projet;
-import com.example.Backend.model.Utilisateur;
 import com.example.Backend.repository.ProjetRepository;
 import com.example.Backend.repository.UtilisateurRepository;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,35 +11,28 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/encadrant")
-@CrossOrigin(origins = "*")
+@CrossOrigin("*")
 public class EncadrantController {
 
     private final ProjetRepository projetRepository;
     private final UtilisateurRepository utilisateurRepository;
 
-    public EncadrantController(
-            ProjetRepository projetRepository,
-            UtilisateurRepository utilisateurRepository
-    ) {
+    public EncadrantController(ProjetRepository projetRepository,
+                               UtilisateurRepository utilisateurRepository) {
         this.projetRepository = projetRepository;
         this.utilisateurRepository = utilisateurRepository;
     }
 
-    /* ============================
-       LISTE DES ÉTUDIANTS
-       ============================ */
     @GetMapping("/etudiants")
     public List<EtudiantProjetDTO> getEtudiants(
-            @RequestParam(required = false) String sujet
+            @RequestParam(required = false) String filiere
     ) {
-        return projetRepository.findEtudiantsDisponibles(sujet);
+        return projetRepository.findEtudiantsDisponibles(filiere);
     }
 
-    /* ============================
-       ENCADRER UN ÉTUDIANT
-       ============================ */
+
     @PostMapping("/encadrer/{projetId}")
-    public ResponseEntity<String> encadrer(
+    public ResponseEntity<?> encadrer(
             @PathVariable Integer projetId,
             @RequestParam Integer encadrantId
     ) {
@@ -53,5 +44,4 @@ public class EncadrantController {
 
         return ResponseEntity.ok("Encadrement effectué");
     }
-
 }

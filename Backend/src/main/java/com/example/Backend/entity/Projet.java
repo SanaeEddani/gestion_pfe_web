@@ -12,7 +12,6 @@ public class Projet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String sujet;
 
     @Column(columnDefinition = "TEXT")
@@ -26,7 +25,6 @@ public class Projet {
     @Column(updatable = false)
     private LocalDateTime created_at;
 
-    // 🔑 IDs seulement
     @Column(name = "etudiant_id", nullable = false)
     private Integer etudiantId;
 
@@ -38,67 +36,15 @@ public class Projet {
         this.created_at = LocalDateTime.now();
     }
 
-    /* ============================
-       GETTERS & SETTERS
-       ============================ */
+    public Integer getId() { return id; }
+    public String getSujet() { return sujet; }
+    public void setSujet(String sujet) { this.sujet = sujet; }
 
-    public Integer getId() {
-        return id;
-    }
+    public String getEntreprise() { return entreprise; }
+    public LocalDate getDate_debut() { return date_debut; }
+    public LocalDate getDate_fin() { return date_fin; }
 
-    public String getSujet() {
-        return sujet;
-    }
-
-    public void setSujet(String sujet) {
-        this.sujet = sujet;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getEntreprise() {
-        return entreprise;
-    }
-
-    public void setEntreprise(String entreprise) {
-        this.entreprise = entreprise;
-    }
-
-    public LocalDate getDate_debut() {
-        return date_debut;
-    }
-
-    public void setDate_debut(LocalDate date_debut) {
-        this.date_debut = date_debut;
-    }
-
-    public LocalDate getDate_fin() {
-        return date_fin;
-    }
-
-    public void setDate_fin(LocalDate date_fin) {
-        this.date_fin = date_fin;
-    }
-
-    public Integer getEtudiantId() {
-        return etudiantId;
-    }
-
-    public void setEtudiantId(Integer etudiantId) {
-        this.etudiantId = etudiantId;
-    }
-
-    public Integer getEncadrantId() {
-        return encadrantId;
-    }
-
-    public void setEncadrantId(Integer encadrantId) {
-        this.encadrantId = encadrantId;
-    }
+    public Integer getEtudiantId() { return etudiantId; }
+    public Integer getEncadrantId() { return encadrantId; }
+    public void setEncadrantId(Integer encadrantId) { this.encadrantId = encadrantId; }
 }
