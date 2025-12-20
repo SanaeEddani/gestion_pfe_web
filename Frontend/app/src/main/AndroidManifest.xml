@@ -76,6 +76,11 @@
             android:name=".EncadrantActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".DetailEtudiantActivity"
+            android:exported="false" />
+
+
 
     </application>
 

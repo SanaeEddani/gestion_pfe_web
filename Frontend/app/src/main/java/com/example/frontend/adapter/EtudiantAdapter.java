@@ -16,15 +16,26 @@ import java.util.List;
 
 public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHolder> {
 
-    public interface OnEncadrerClick {
-        void onEncadrer(EtudiantProjetDTO etudiant);
+    // 🔹 MODES
+    public static final int MODE_ETUDIANTS_DISPO = 0;
+    public static final int MODE_MES_ETUDIANTS = 1;
+
+    public interface OnActionClick {
+        void onClick(EtudiantProjetDTO etudiant);
     }
 
     private final List<EtudiantProjetDTO> list;
-    private final OnEncadrerClick listener;
+    private final OnActionClick listener;
+    private final int mode;
 
-    public EtudiantAdapter(List<EtudiantProjetDTO> list, OnEncadrerClick listener) {
+    // 🔹 CONSTRUCTEUR
+    public EtudiantAdapter(
+            List<EtudiantProjetDTO> list,
+            int mode,
+            OnActionClick listener
+    ) {
         this.list = list;
+        this.mode = mode;
         this.listener = listener;
     }
 
@@ -40,12 +51,23 @@ public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         EtudiantProjetDTO e = list.get(position);
 
-        holder.txtNom.setText(e.getNom() + " " + e.getPrenom() + " (" + e.getFiliere() + ")");
+        holder.txtNom.setText(
+                e.getNom() + " " + e.getPrenom() + " (" + e.getFiliere() + ")"
+        );
         holder.txtSujet.setText("Sujet : " + e.getSujet());
         holder.txtEntreprise.setText("Entreprise : " + e.getEntreprise());
-        holder.txtDates.setText("Période : " + e.getDateDebut() + " → " + e.getDateFin());
+        holder.txtDates.setText(
+                "Période : " + e.getDateDebut() + " → " + e.getDateFin()
+        );
 
-        holder.btnEncadrer.setOnClickListener(v -> listener.onEncadrer(e));
+        // 🔹 TEXTE DU BOUTON SELON L'ÉCRAN
+        if (mode == MODE_MES_ETUDIANTS) {
+            holder.btnAction.setText("Détail");
+        } else {
+            holder.btnAction.setText("Encadrer");
+        }
+
+        holder.btnAction.setOnClickListener(v -> listener.onClick(e));
     }
 
     @Override
@@ -55,7 +77,7 @@ public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNom, txtSujet, txtEntreprise, txtDates;
-        Button btnEncadrer;
+        Button btnAction;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -63,7 +85,7 @@ public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHo
             txtSujet = itemView.findViewById(R.id.txtSujet);
             txtEntreprise = itemView.findViewById(R.id.txtEntreprise);
             txtDates = itemView.findViewById(R.id.txtDates);
-            btnEncadrer = itemView.findViewById(R.id.btnEncadrer);
+            btnAction = itemView.findViewById(R.id.btnEncadrer); // même bouton
         }
     }
 }
