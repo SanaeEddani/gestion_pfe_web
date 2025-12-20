@@ -19,14 +19,13 @@
 
         <!-- Activity principale (Launcher) -->
         <activity
-            android:name=".EncadrantActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <!-- Auth / Utilisateur -->
         <activity
@@ -73,7 +72,9 @@
             android:name=".CadreActivity"
             android:exported="false" />
 
-
+        <activity
+            android:name=".EncadrantActivity"
+            android:exported="false"/>
 
 
     </application>

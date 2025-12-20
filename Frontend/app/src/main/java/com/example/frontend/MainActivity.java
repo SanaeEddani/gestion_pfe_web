@@ -92,8 +92,9 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainActivity.this, StudentActivity.class));
                                 break;
                             case 3:
-                                startActivity(new Intent(MainActivity.this, CadreActivity.class));
+                                startActivity(new Intent(MainActivity.this, EncadrantActivity.class));
                                 break;
+
                             default:
                                 Toast.makeText(MainActivity.this, "Rôle inconnu",Toast.LENGTH_SHORT).show();
                                 break;
