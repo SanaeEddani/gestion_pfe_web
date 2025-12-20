@@ -1,6 +1,10 @@
 package com.example.frontend;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +17,9 @@ import com.example.frontend.api.RetrofitClient;
 import com.example.frontend.model.EtudiantProjetDTO;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,8 +27,13 @@ import retrofit2.Response;
 
 public class EncadrantActivity extends AppCompatActivity {
 
+    private static final int ENCADRANT_ID = 6;
+
     private EncadrantApi api;
-    private final int ENCADRANT_ID = 1; // ⚠️ à remplacer par l'id réel connecté
+    private EtudiantAdapter adapter;
+
+    private final List<EtudiantProjetDTO> allEtudiants = new ArrayList<>();
+    private final List<EtudiantProjetDTO> filteredEtudiants = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,25 +43,46 @@ public class EncadrantActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerEtudiants);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        api = RetrofitClient.getRetrofitInstance().create(EncadrantApi.class);
+        Spinner spinnerFiliere = findViewById(R.id.spinnerFiliere);
 
-        chargerEtudiants(recyclerView);
+        adapter = new EtudiantAdapter(filteredEtudiants, etudiant -> {
+            api.encadrer(etudiant.getProjetId(), ENCADRANT_ID)
+                    .enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(Call<String> call, Response<String> response) {
+                            allEtudiants.remove(etudiant);
+                            filteredEtudiants.remove(etudiant);
+                            adapter.notifyDataSetChanged();
+                            Toast.makeText(EncadrantActivity.this,
+                                    "Étudiant encadré", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<String> call, Throwable t) {
+                            Toast.makeText(EncadrantActivity.this,
+                                    "Erreur encadrement", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        recyclerView.setAdapter(adapter);
+
+        api = RetrofitClient.getRetrofitInstance().create(EncadrantApi.class);
+        chargerEtudiants(spinnerFiliere);
     }
 
-    private void chargerEtudiants(RecyclerView recyclerView) {
+    private void chargerEtudiants(Spinner spinnerFiliere) {
         api.getEtudiants(null).enqueue(new Callback<List<EtudiantProjetDTO>>() {
             @Override
             public void onResponse(Call<List<EtudiantProjetDTO>> call,
                                    Response<List<EtudiantProjetDTO>> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<EtudiantProjetDTO> list = new ArrayList<>(response.body());
+                    allEtudiants.clear();
+                    allEtudiants.addAll(response.body());
 
-                    EtudiantAdapter adapter = new EtudiantAdapter(list, etudiant -> {
-                        encadrerProjet(etudiant.getProjetId(), list, etudiant, recyclerView);
-                    });
-
-                    recyclerView.setAdapter(adapter);
+                    setupSpinner(spinnerFiliere);
+                    appliquerFiltre("Toutes");
                 }
             }
 
@@ -62,28 +94,52 @@ public class EncadrantActivity extends AppCompatActivity {
         });
     }
 
-    private void encadrerProjet(int projetId,
-                                List<EtudiantProjetDTO> list,
-                                EtudiantProjetDTO etudiant,
-                                RecyclerView recyclerView) {
+    // =============================
+    // Spinner filière
+    // =============================
+    private void setupSpinner(Spinner spinner) {
 
-        api.encadrer(projetId, ENCADRANT_ID).enqueue(new Callback<String>() {
+        Set<String> filieresSet = new HashSet<>();
+        for (EtudiantProjetDTO e : allEtudiants) {
+            filieresSet.add(e.getFiliere());
+        }
+
+        List<String> filieres = new ArrayList<>();
+        filieres.add("Toutes");
+        filieres.addAll(filieresSet);
+
+        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                filieres
+        );
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterSpinner);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(EncadrantActivity.this,
-                            "Étudiant encadré", Toast.LENGTH_SHORT).show();
-
-                    list.remove(etudiant);
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                appliquerFiltre(filieres.get(position));
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(EncadrantActivity.this,
-                        "Erreur encadrement", Toast.LENGTH_SHORT).show();
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
+    }
+
+    // =============================
+    // Filtrage par filière
+    // =============================
+    private void appliquerFiltre(String filiere) {
+        filteredEtudiants.clear();
+
+        for (EtudiantProjetDTO e : allEtudiants) {
+            if (filiere.equals("Toutes") || e.getFiliere().equalsIgnoreCase(filiere)) {
+                filteredEtudiants.add(e);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }

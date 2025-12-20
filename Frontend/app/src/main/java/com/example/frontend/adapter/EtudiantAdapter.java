@@ -39,8 +39,11 @@ public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         EtudiantProjetDTO e = list.get(position);
+
         holder.txtNom.setText(e.getNom() + " " + e.getPrenom() + " (" + e.getFiliere() + ")");
         holder.txtSujet.setText("Sujet : " + e.getSujet());
+        holder.txtEntreprise.setText("Entreprise : " + e.getEntreprise());
+        holder.txtDates.setText("Période : " + e.getDateDebut() + " → " + e.getDateFin());
 
         holder.btnEncadrer.setOnClickListener(v -> listener.onEncadrer(e));
     }
@@ -51,13 +54,15 @@ public class EtudiantAdapter extends RecyclerView.Adapter<EtudiantAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNom, txtSujet;
+        TextView txtNom, txtSujet, txtEntreprise, txtDates;
         Button btnEncadrer;
 
         ViewHolder(View itemView) {
             super(itemView);
             txtNom = itemView.findViewById(R.id.txtNom);
             txtSujet = itemView.findViewById(R.id.txtSujet);
+            txtEntreprise = itemView.findViewById(R.id.txtEntreprise);
+            txtDates = itemView.findViewById(R.id.txtDates);
             btnEncadrer = itemView.findViewById(R.id.btnEncadrer);
         }
     }
