@@ -122,4 +122,44 @@ public class AdminService {
         Projet projet = projetRepository.findByEtudiant_Id(etudiantId).orElseThrow();
         projetRepository.delete(projet);
     }
+
+    public void addStudentsToEncadrant(Long encadrantId, List<String> numAppogeeList) {
+        Utilisateur encadrant = utilisateurRepository.findById(encadrantId).orElseThrow();
+
+        for (String numAppogee : numAppogeeList) {
+            Utilisateur etudiant = utilisateurRepository.findAll().stream()
+                    .filter(u -> u.getAppogee() != null && numAppogee.equals(u.getAppogee().getNumAppogee()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Étudiant avec Apogée " + numAppogee + " introuvable"));
+
+            // Vérifier si projet existe
+            Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId())
+                    .orElseGet(() -> {
+                        Projet p = new Projet();
+                        p.setEtudiant(etudiant);
+                        return p;
+                    });
+
+            projet.setEncadrant(encadrant);
+            projetRepository.save(projet);
+        }
+    }
+
+    public void removeStudentsFromEncadrant(Long encadrantId, List<String> numAppogeeList) {
+        Utilisateur encadrant = utilisateurRepository.findById(encadrantId).orElseThrow();
+
+        for (String numAppogee : numAppogeeList) {
+            Utilisateur etudiant = utilisateurRepository.findAll().stream()
+                    .filter(u -> u.getAppogee() != null && numAppogee.equals(u.getAppogee().getNumAppogee()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Étudiant avec Apogée " + numAppogee + " introuvable"));
+
+            Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId()).orElse(null);
+            if (projet != null && projet.getEncadrant() != null && projet.getEncadrant().getId().equals(encadrantId)) {
+                projet.setEncadrant(null);
+                projetRepository.save(projet);
+            }
+        }
+    }
+
 }

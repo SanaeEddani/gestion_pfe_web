@@ -40,4 +40,17 @@ public class AdminController {
     public void desaffecter(@PathVariable Long etudiantId) {
         adminService.supprimerAffectation(etudiantId);
     }
+
+    // Ajouter plusieurs étudiants à un encadrant
+    @PostMapping("/encadrants/{encadrantId}/addStudents")
+    public void addStudentsToEncadrant(@PathVariable Long encadrantId, @RequestBody List<String> numAppogeeList) {
+        adminService.addStudentsToEncadrant(encadrantId, numAppogeeList);
+    }
+
+    // Supprimer plusieurs étudiants d’un encadrant
+    @PostMapping("/encadrants/{encadrantId}/removeStudents")
+    public void removeStudentsFromEncadrant(@PathVariable Long encadrantId, @RequestBody List<String> numAppogeeList) {
+        adminService.removeStudentsFromEncadrant(encadrantId, numAppogeeList);
+    }
+
 }

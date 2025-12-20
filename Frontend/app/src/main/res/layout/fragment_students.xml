@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- ===== ZONE FILTRAGE (NOUVELLE) ===== -->
+    <!-- ===== ZONE FILTRAGE ===== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:hint="Apogée"
             android:inputType="number" />
+
         <TextView
             android:id="@+id/textStatusLabel"
             android:layout_width="wrap_content"
@@ -31,17 +32,18 @@
             android:textStyle="bold"
             android:layout_marginTop="6dp"/>
 
-
         <Spinner
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- ===== LISTE DES ÉTUDIANTS (INCHANGÉE) ===== -->
+    <!-- ===== LISTE DES ÉTUDIANTS (SCROLL ACTIF) ===== -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerStudents"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:overScrollMode="always"/>
 </LinearLayout>

@@ -28,4 +28,11 @@ public interface AdminApi {
 
     @DELETE("admin/desaffecter/{id}")
     Call<Void> desaffecter(@Path("id") Long etudiantId);
+
+    @POST("admin/encadrants/{encadrantId}/addStudents")
+    Call<Void> addStudentsToEncadrant(@Path("encadrantId") Long encadrantId, @Body List<String> numAppogeeList);
+
+    @POST("admin/encadrants/{encadrantId}/removeStudents")
+    Call<Void> removeStudentsFromEncadrant(@Path("encadrantId") Long encadrantId, @Body List<String> numAppogeeList);
+
 }
