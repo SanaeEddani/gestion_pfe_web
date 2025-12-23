@@ -2,11 +2,13 @@ package com.example.Backend.repository;
 
 import com.example.Backend.dto.EtudiantProjetDTO;
 import com.example.Backend.entity.Projet;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjetRepository extends JpaRepository<Projet, Integer> {
 
@@ -59,9 +61,8 @@ public interface ProjetRepository extends JpaRepository<Projet, Integer> {
             @Param("encadrantId") Integer encadrantId
     );
 
-
     /* ===============================
-       ENCADRER
+       ENCADRER UN ÉTUDIANT
        =============================== */
     @Modifying
     @Transactional
@@ -78,4 +79,10 @@ public interface ProjetRepository extends JpaRepository<Projet, Integer> {
             @Param("projetId") Integer projetId,
             @Param("encadrantId") Integer encadrantId
     );
+
+    /* ===============================
+       RECHERCHE PROJET PAR ÉTUDIANT
+       (ajouté depuis l’autre version)
+       =============================== */
+    Optional<Projet> findByEtudiant_Id(Integer etudiantId);
 }
