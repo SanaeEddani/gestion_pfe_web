@@ -43,12 +43,11 @@ public class SignupActivity extends AppCompatActivity {
     Button registerButton;
     TextView loginLink;
 
+    // Règles mot de passe
     TextView ruleLength, ruleLowercase, ruleUppercase, ruleDigit, ruleSpecial;
 
     // Retrofit
-    AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
-            .create(AuthApi.class);
+    private AuthApi authApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +56,9 @@ public class SignupActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate() appelé");
 
-        // Bind views
+        /* =======================
+           Bind views
+           ======================= */
         roleGroup = findViewById(R.id.roleRadioGroup);
         studentBtn = findViewById(R.id.studentRadioButton);
         teacherBtn = findViewById(R.id.teacherRadioButton);
@@ -84,7 +85,9 @@ public class SignupActivity extends AppCompatActivity {
         ruleDigit = findViewById(R.id.ruleDigit);
         ruleSpecial = findViewById(R.id.ruleSpecial);
 
-        // Spinners
+        /* =======================
+           Spinners
+           ======================= */
         filiereSpinner.setAdapter(new android.widget.ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"-- Choisir --", "GI", "GE", "TM", "GC", "RT"}));
@@ -93,9 +96,11 @@ public class SignupActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"-- Choisir --", "Informatique", "Maths", "Physique", "Management"}));
 
-        // Role change
+        /* =======================
+           Changement de rôle
+           ======================= */
         roleGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            Log.d(TAG, "Role changé : " + checkedId);
+            Log.d(TAG, "Rôle changé : " + checkedId);
             if (checkedId == R.id.studentRadioButton) {
                 studentSection.setVisibility(View.VISIBLE);
                 teacherSection.setVisibility(View.GONE);
@@ -105,24 +110,31 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+        /* =======================
+           Validation mot de passe
+           ======================= */
         passwordEditText.addTextChangedListener(passwordWatcher);
 
+        /* =======================
+           Retrofit
+           ======================= */
+        authApi = RetrofitClient
+                .getRetrofitInstance(this)
+                .create(AuthApi.class);
+
+        /* =======================
+           Actions
+           ======================= */
         registerButton.setOnClickListener(v -> {
             Log.d(TAG, "Bouton S'inscrire cliqué");
-
-            boolean valid = validateFields();
-            Log.d(TAG, "Validation formulaire = " + valid);
-
-            if (valid) {
+            if (validateFields()) {
                 registerUser();
-            } else {
-                Log.d(TAG, "Formulaire invalide, registerUser() NON appelé");
             }
         });
 
-        loginLink.setOnClickListener(v -> {
-            startActivity(new Intent(SignupActivity.this, MainActivity.class));
-        });
+        loginLink.setOnClickListener(v ->
+                startActivity(new Intent(SignupActivity.this, MainActivity.class))
+        );
     }
 
     /* =======================
@@ -179,17 +191,18 @@ public class SignupActivity extends AppCompatActivity {
             return false;
         }
 
-        String expectedEmail = prenomEditText.getText().toString().trim().toLowerCase()
-                + "." + nomEditText.getText().toString().trim().toLowerCase()
-                + "@uit.ac.ma";
+        String expectedEmail =
+                prenomEditText.getText().toString().trim().toLowerCase()
+                        + "." +
+                        nomEditText.getText().toString().trim().toLowerCase()
+                        + "@uit.ac.ma";
 
         if (!email.equals(expectedEmail)) {
             emailEditText.setError("Email doit être prenom.nom@uit.ac.ma");
             return false;
         }
 
-        String password = passwordEditText.getText().toString();
-        if (!isPasswordValid(password)) {
+        if (!isPasswordValid(passwordEditText.getText().toString())) {
             Toast.makeText(this, "Mot de passe non conforme", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -225,7 +238,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private void registerUser() {
 
-        Log.d(TAG, "registerUser() APPELÉ");
+        Log.d(TAG, "registerUser() appelé");
 
         UserRequest request = new UserRequest();
         request.setNom(nomEditText.getText().toString().trim());
@@ -243,8 +256,6 @@ public class SignupActivity extends AppCompatActivity {
             request.setDepartement(departementSpinner.getSelectedItem().toString());
         }
 
-        Log.d(TAG, "Envoi requête Retrofit avec email = " + request.getEmail());
-
         registerButton.setEnabled(false);
         registerButton.setText("Inscription...");
 
@@ -252,42 +263,39 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
 
-                Log.d(TAG, "onResponse() appelé");
-                Log.d(TAG, "HTTP code = " + response.code());
-                Log.d(TAG, "isSuccessful = " + response.isSuccessful());
-
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
 
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "Réponse OK : " + response.body().getMessage());
-
-                    Toast.makeText(SignupActivity.this,
+                    Toast.makeText(
+                            SignupActivity.this,
                             response.body().getMessage(),
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG
+                    ).show();
 
                     if (response.body().isSuccess()) finish();
                 } else {
-                    Log.e(TAG, "Erreur serveur");
-                    Toast.makeText(SignupActivity.this,
+                    Toast.makeText(
+                            SignupActivity.this,
                             "Erreur serveur",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
 
-                Log.e(TAG, "onFailure() appelé");
-                Log.e(TAG, "Type erreur = " + t.getClass().getName());
-                Log.e(TAG, "Message = " + t.getMessage(), t);
+                Log.e(TAG, "Erreur réseau", t);
 
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
 
-                Toast.makeText(SignupActivity.this,
-                        "Erreur réseau : " + t.getClass().getSimpleName(),
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        SignupActivity.this,
+                        "Erreur réseau",
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
     }

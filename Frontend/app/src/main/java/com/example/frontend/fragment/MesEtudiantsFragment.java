@@ -51,12 +51,14 @@ public class MesEtudiantsFragment extends Fragment {
         );
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerMesEtudiants);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // 🔹 ID encadrant connecté
+        // ✅ ID encadrant connecté (depuis user_session)
         encadrantId = getEncadrantId();
 
-        api = RetrofitClient.getRetrofitInstance()
+        // ✅ Retrofit AVEC Context → token envoyé automatiquement
+        api = RetrofitClient
+                .getRetrofitInstance(requireContext())
                 .create(EncadrantApi.class);
 
         adapter = new EtudiantAdapter(
@@ -64,7 +66,7 @@ public class MesEtudiantsFragment extends Fragment {
                 EtudiantAdapter.MODE_MES_ETUDIANTS,
                 etudiant -> {
 
-                    // ✅ NAVIGATION VERS DETAIL (avec les infos)
+                    // ✅ Navigation vers détail étudiant
                     Intent intent = new Intent(
                             requireContext(),
                             DetailEtudiantActivity.class
@@ -97,7 +99,7 @@ public class MesEtudiantsFragment extends Fragment {
         return view;
     }
 
-    // ✅ Refresh automatique
+    // 🔁 Refresh automatique quand on revient sur le fragment
     @Override
     public void onResume() {
         super.onResume();
@@ -105,6 +107,15 @@ public class MesEtudiantsFragment extends Fragment {
     }
 
     private void chargerMesEtudiants() {
+
+        if (encadrantId <= 0) {
+            Toast.makeText(
+                    requireContext(),
+                    "Encadrant non identifié",
+                    Toast.LENGTH_SHORT
+            ).show();
+            return;
+        }
 
         api.getMesEtudiants(encadrantId)
                 .enqueue(new Callback<List<EtudiantProjetDTO>>() {
@@ -120,6 +131,13 @@ public class MesEtudiantsFragment extends Fragment {
                             etudiants.clear();
                             etudiants.addAll(response.body());
                             adapter.notifyDataSetChanged();
+
+                        } else {
+                            Toast.makeText(
+                                    requireContext(),
+                                    "Erreur chargement mes étudiants",
+                                    Toast.LENGTH_SHORT
+                            ).show();
                         }
                     }
 
@@ -129,17 +147,18 @@ public class MesEtudiantsFragment extends Fragment {
                             Throwable t
                     ) {
                         Toast.makeText(
-                                getContext(),
-                                "Erreur chargement mes étudiants",
+                                requireContext(),
+                                "Erreur réseau",
                                 Toast.LENGTH_SHORT
                         ).show();
                     }
                 });
     }
 
+    // ✅ Récupération correcte de l'ID encadrant
     private int getEncadrantId() {
         SharedPreferences sp = requireContext()
-                .getSharedPreferences("auth", Context.MODE_PRIVATE);
+                .getSharedPreferences("user_session", Context.MODE_PRIVATE);
         return sp.getInt("user_id", -1);
     }
 }

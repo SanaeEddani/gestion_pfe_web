@@ -3,8 +3,32 @@ package com.example.frontend.model;
 public class JwtResponse {
 
     private String token;
-    private String role; // admin / etudiant / encadrant
-    private int id;      // ✅ ID utilisateur (AJOUT)
+    private String role;     // admin / etudiant / encadrant
+
+    // ⚠️ On garde LES DEUX pour compatibilité
+    private int id;          // utilisé dans une partie du code
+    private int userId;      // utilisé dans une autre partie
+
+    private String email;    // optionnel
+
+    /* =========================
+       Constructeurs
+       ========================= */
+
+    public JwtResponse() {
+        // constructeur par défaut
+    }
+
+    public JwtResponse(String token, String role, int userId) {
+        this.token = token;
+        this.role = role;
+        this.userId = userId;
+        this.id = userId; // synchro automatique
+    }
+
+    /* =========================
+       Getters / Setters
+       ========================= */
 
     public String getToken() {
         return token;
@@ -22,15 +46,39 @@ public class JwtResponse {
         this.role = role;
     }
 
-    public int getId() {            // ✅ NOUVEAU
+    /* --- ID (version 1) --- */
+    public int getId() {
         return id;
     }
 
-    public void setId(int id) {     // ✅ NOUVEAU
+    public void setId(int id) {
         this.id = id;
+        this.userId = id; // synchro
     }
 
-    // Méthode utilitaire : rôle en int
+    /* --- userId (version 2) --- */
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+        this.id = userId; // synchro
+    }
+
+    /* --- Email (optionnel) --- */
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /* =========================
+       Méthode utilitaire
+       ========================= */
+
     public int getRoleInt() {
         if (role == null) return 0;
 

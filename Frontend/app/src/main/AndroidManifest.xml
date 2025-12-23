@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.example.frontend">
 
     <!-- Permissions réseau -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,7 +18,9 @@
             android:networkSecurityConfig="@xml/network_security_config"
             tools:targetApi="31">
 
-        <!-- Activity principale (Launcher) -->
+        <!-- =========================
+             Activity principale
+             ========================= -->
         <activity
                 android:name=".MainActivity"
                 android:exported="true">
@@ -27,7 +30,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Auth / Utilisateur -->
+        <!-- =========================
+             Authentification / Utilisateur
+             ========================= -->
         <activity
                 android:name=".SignupActivity"
                 android:exported="false" />
@@ -44,7 +49,9 @@
                 android:name=".VerifyOtpActivity"
                 android:exported="false" />
 
-        <!-- Reset password (Deep link) -->
+        <!-- =========================
+             Reset Password (Deep Links)
+             ========================= -->
         <activity
                 android:name=".ResetPasswordActivity"
                 android:exported="true">
@@ -64,10 +71,18 @@
                         android:scheme="http"
                         android:host="10.101.82.35"
                         android:pathPrefix="/reset-password" />
+
+                <!-- IP 3 -->
+                <data
+                        android:scheme="http"
+                        android:host="192.168.43.16"
+                        android:pathPrefix="/reset-password" />
             </intent-filter>
         </activity>
 
-        <!-- Rôles -->
+        <!-- =========================
+             Rôles
+             ========================= -->
         <activity
                 android:name=".AdminActivity"
                 android:exported="false" />
@@ -84,9 +99,30 @@
                 android:name=".EncadrantActivity"
                 android:exported="false" />
 
+        <!-- =========================
+             Étudiant / Projets / Documents
+             ========================= -->
+        <activity
+                android:name=".EtudiantProfileActivity"
+                android:exported="false" />
+
         <activity
                 android:name=".DetailEtudiantActivity"
                 android:exported="false" />
+
+        <activity
+                android:name=".AjouterProjetActivity"
+                android:exported="false"
+                android:theme="@style/Theme.Frontend" />
+
+        <activity
+                android:name=".DocumentsActivity"
+                android:exported="false" />
+
+        <activity
+                android:name=".item_document"
+                android:exported="false"
+                android:theme="@style/Theme.Frontend" />
 
     </application>
 

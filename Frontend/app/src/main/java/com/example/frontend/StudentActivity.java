@@ -1,24 +1,24 @@
 package com.example.frontend;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class StudentActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_student);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        // Rediriger directement vers StudentDashboardActivity
+        Intent intent = new Intent(this, EtudiantProfileActivity.class);
+
+        // Récupérer l'ID de l'étudiant depuis SharedPreferences ou l'intent
+        int studentId = getSharedPreferences("user_session", MODE_PRIVATE)
+                .getInt("user_id", 1);
+
+        intent.putExtra("STUDENT_ID", studentId);
+        startActivity(intent);
+        finish(); // Fermer StudentActivity
     }
 }

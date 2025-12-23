@@ -14,12 +14,13 @@ public class Projet {
 
     /* ===================== RELATIONS ===================== */
 
-    // Étudiant (1 projet = 1 étudiant)
-    @OneToOne
-    @JoinColumn(name = "etudiant_id", unique = true)
+    // Étudiant
+    // ➜ On garde la relation ManyToOne (plus souple que OneToOne)
+    @ManyToOne
+    @JoinColumn(name = "etudiant_id")
     private Utilisateur etudiant;
 
-    // Encadrant (1 encadrant = plusieurs projets)
+    // Encadrant (optionnel selon ton besoin)
     @ManyToOne
     @JoinColumn(name = "encadrant_id")
     private Utilisateur encadrant;
@@ -53,6 +54,10 @@ public class Projet {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Utilisateur getEtudiant() {

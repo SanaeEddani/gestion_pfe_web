@@ -22,6 +22,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private AuthApi authApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         TextView tvRegister = findViewById(R.id.tvRegister);
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
+        /* =========================
+           Navigation
+           ========================= */
         tvRegister.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, SignupActivity.class))
         );
@@ -41,11 +46,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ForgotPasswordActivity.class))
         );
 
-        // 🔹 API Auth
-        AuthApi authApi = RetrofitClient
-                .getRetrofitInstance()
+        /* =========================
+           Initialisation Retrofit
+           ========================= */
+        authApi = RetrofitClient
+                .getRetrofitInstance(MainActivity.this)
                 .create(AuthApi.class);
 
+        /* =========================
+           Login
+           ========================= */
         btnLogin.setOnClickListener(v -> {
 
             String userEmail = email.getText().toString().trim();
@@ -70,37 +80,59 @@ public class MainActivity extends AppCompatActivity {
 
                         JwtResponse jwt = response.body();
 
-                        int userId = jwt.getId();          // ✅ ID utilisateur
-                        int role = jwt.getRoleInt();       // ✅ rôle
-                        String token = jwt.getToken();     // ✅ JWT
+                        String token = jwt.getToken();
+                        String roleString = jwt.getRole();
+                        int role = jwt.getRoleInt();
 
-                        // ✅ SAUVEGARDE DANS SharedPreferences
-                        SharedPreferences sp =
-                                getSharedPreferences("auth", MODE_PRIVATE);
+                        // ✅ ID utilisateur (compatible id / userId)
+                        int userId = jwt.getId();
+                        if (userId <= 0) {
+                            userId = jwt.getUserId();
+                        }
+                        if (userId <= 0) {
+                            userId = getUserIdFromEmail(userEmail);
+                        }
 
-                        sp.edit()
-                                .putInt("user_id", userId)
-                                .putInt("role", role)
-                                .putString("token", token)
-                                .apply();
+                        /* =========================
+                           Sauvegarde session
+                           ========================= */
+                        SharedPreferences.Editor editor =
+                                getSharedPreferences("user_session", MODE_PRIVATE).edit();
 
-                        // 🔁 Redirection selon rôle
+                        editor.putString("token", token);
+                        editor.putString("email", userEmail);
+                        editor.putString("role", roleString);
+                        editor.putInt("role_int", role);
+                        editor.putInt("user_id", userId);
+                        editor.apply();
+
+                        Toast.makeText(
+                                MainActivity.this,
+                                "Connexion réussie !",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        /* =========================
+                           Redirection selon rôle
+                           ========================= */
                         switch (role) {
-                            case 1:
+                            case 1: // Admin
                                 startActivity(new Intent(
                                         MainActivity.this,
                                         AdminActivity.class
                                 ));
                                 break;
 
-                            case 2:
-                                startActivity(new Intent(
+                            case 2: // Étudiant
+                                Intent studentIntent = new Intent(
                                         MainActivity.this,
-                                        StudentActivity.class
-                                ));
+                                        EtudiantProfileActivity.class
+                                );
+                                studentIntent.putExtra("STUDENT_ID", userId);
+                                startActivity(studentIntent);
                                 break;
 
-                            case 3:
+                            case 3: // Encadrant / Cadre
                                 startActivity(new Intent(
                                         MainActivity.this,
                                         EncadrantActivity.class
@@ -138,6 +170,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /* =========================
+       Méthodes utilitaires
+       ========================= */
+
+    // ⚠️ TEMPORAIRE – à remplacer par une vraie API
+    private int getUserIdFromEmail(String email) {
+        SharedPreferences prefs =
+                getSharedPreferences("user_session", MODE_PRIVATE);
+        return prefs.getInt("user_id", 1); // valeur par défaut test
+    }
+
     private void showPopup(String title, String message) {
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle(title)
@@ -145,4 +188,35 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", null)
                 .show();
     }
+
+    /* =========================
+       OPTIONNEL : auto-login
+       ========================= */
+    /*
+    @Override
+    protected void onStart() {
+        super.onStart();
+        SharedPreferences prefs =
+                getSharedPreferences("user_session", MODE_PRIVATE);
+
+        if (prefs.contains("token") && prefs.contains("user_id")) {
+
+            int userId = prefs.getInt("user_id", -1);
+            int role = prefs.getInt("role_int", -1);
+
+            if (userId > 0 && role > 0) {
+                if (role == 1) {
+                    startActivity(new Intent(this, AdminActivity.class));
+                } else if (role == 2) {
+                    Intent i = new Intent(this, EtudiantProfileActivity.class);
+                    i.putExtra("STUDENT_ID", userId);
+                    startActivity(i);
+                } else if (role == 3) {
+                    startActivity(new Intent(this, EncadrantActivity.class));
+                }
+                finish();
+            }
+        }
+    }
+    */
 }
