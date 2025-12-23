@@ -2,6 +2,7 @@
 package com.example.frontend;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.frontend.api.AuthApi;
-import com.example.frontend.api.RetrofitClientAuth;
+import com.example.frontend.api.RetrofitClient;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,7 +58,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         ruleSpecial = findViewById(R.id.ruleSpecial);
 
         // Initialiser Retrofit
-        authApi = RetrofitClientAuth.getInstance().create(AuthApi.class);
+        authApi = RetrofitClient.getRetrofitInstance().create(AuthApi.class);
 
         // Ajouter le TextWatcher pour valider les règles en temps réel
         newPasswordInput.addTextChangedListener(new TextWatcher() {

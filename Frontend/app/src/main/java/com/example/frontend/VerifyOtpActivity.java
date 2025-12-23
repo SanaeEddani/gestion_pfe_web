@@ -9,11 +9,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.frontend.api.AuthApi;
-import com.example.frontend.api.RetrofitClientAuth;
+import com.example.frontend.api.RetrofitClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VerifyOtpActivity extends AppCompatActivity {
 
@@ -39,8 +41,8 @@ public class VerifyOtpActivity extends AppCompatActivity {
     }
 
     // Initialiser Retrofit
-    AuthApi authApi = RetrofitClientAuth
-            .getInstance()
+    AuthApi authApi = RetrofitClient
+            .getRetrofitInstance()
             .create(AuthApi.class);
 
     private void verify() {
