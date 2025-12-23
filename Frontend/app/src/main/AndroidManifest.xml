@@ -16,10 +16,13 @@
         android:theme="@style/Theme.Frontend"
         tools:targetApi="31">
         <activity
-            android:name=".AjouterProjetActivity"
+            android:name=".item_document"
             android:exported="false"
             android:theme="@style/Theme.Frontend" />
-        <!-- LOGIN (Activity de démarrage) -->
+        <activity
+            android:name=".AjouterProjetActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Frontend" /> <!-- LOGIN (Activity de démarrage) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -55,7 +58,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="192.168.1.5"
+                    android:host="192.168.43.16"
                     android:pathPrefix="/reset-password"
                     android:scheme="http" />
             </intent-filter>
@@ -68,6 +71,10 @@
             android:exported="false" />
         <activity
             android:name=".CadreActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".DocumentsActivity"
             android:exported="false" />
     </application>
 
