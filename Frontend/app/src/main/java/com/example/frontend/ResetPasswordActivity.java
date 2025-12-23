@@ -58,7 +58,10 @@ public class ResetPasswordActivity extends AppCompatActivity {
         ruleSpecial = findViewById(R.id.ruleSpecial);
 
         // Initialiser Retrofit
-        authApi = RetrofitClient.getRetrofitInstance().create(AuthApi.class);
+        authApi = RetrofitClient
+                .getRetrofitInstance(ResetPasswordActivity.this)
+                .create(AuthApi.class);
+
 
         // Ajouter le TextWatcher pour valider les règles en temps réel
         newPasswordInput.addTextChangedListener(new TextWatcher() {

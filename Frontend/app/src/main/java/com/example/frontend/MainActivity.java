@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialiser Retrofit
         AuthApi authApi = RetrofitClient
-                .getRetrofitInstance()
+                .getRetrofitInstance(MainActivity.this)
                 .create(AuthApi.class);
 
         btnLogin.setOnClickListener(v -> {

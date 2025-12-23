@@ -25,12 +25,6 @@
             android:text="Nom :" />
 
         <TextView
-            android:id="@+id/tvPrenom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Prénom :" />
-
-        <TextView
             android:id="@+id/tvEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,22 +37,55 @@
             android:text="Filière :" />
 
         <TextView
-            android:id="@+id/tvDepartement"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Département :" />
-
-        <TextView
             android:id="@+id/tvAppogee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Appogée :" />
 
-        <TextView
-            android:id="@+id/tvRole"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btnAjouterProjet"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rôle :" />
+            android:text="Ajouter un projet"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="#6200EE"
+            android:textColor="#FFFFFF"
+            android:padding="12dp"
+            android:textAllCaps="false"
+            android:layout_gravity="center"/>
+
+        <!-- LinearLayout projetContainer déplacé à l'intérieur du premier LinearLayout -->
+        <LinearLayout
+            android:id="@+id/projetContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/projet_card_background"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvProjetSujet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sujet :"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tvProjetDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description :" />
+
+            <TextView
+                android:id="@+id/tvProjetEntreprise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Entreprise :" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
 </ScrollView>

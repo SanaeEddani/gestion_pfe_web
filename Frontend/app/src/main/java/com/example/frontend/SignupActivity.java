@@ -210,8 +210,9 @@ public class SignupActivity extends AppCompatActivity {
 
     // Initialiser Retrofit
     AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
+            .getRetrofitInstance(SignupActivity.this)
             .create(AuthApi.class);
+
 
     /* =======================
        API CALL
