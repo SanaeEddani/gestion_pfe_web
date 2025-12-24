@@ -38,6 +38,9 @@ public class EtudiantsDisponiblesFragment extends Fragment {
     private final List<EtudiantProjetDTO> etudiants = new ArrayList<>();
     private int encadrantId;
 
+    // ✅ AJOUT : pour éviter le double appel du spinner
+    private boolean firstSelection = true;
+
     @Nullable
     @Override
     public View onCreateView(
@@ -54,24 +57,24 @@ public class EtudiantsDisponiblesFragment extends Fragment {
 
         Spinner spinner = view.findViewById(R.id.spinnerFiliere);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerEtudiants);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // 🔹 Récupération ID encadrant
+        // 🔹 Récupération ID encadrant (CORRIGÉ)
         encadrantId = getEncadrantId();
 
-        api = RetrofitClient.getRetrofitInstance()
+        // ⚠️ IMPORTANT : Retrofit AVEC context (JWT)
+        api = RetrofitClient
+                .getRetrofitInstance(requireContext())
                 .create(EncadrantApi.class);
 
-        // ✅ ADAPTER EN MODE "ETUDIANTS DISPONIBLES"
         adapter = new EtudiantAdapter(
                 etudiants,
                 EtudiantAdapter.MODE_ETUDIANTS_DISPO,
                 etudiant -> {
 
-                    if (encadrantId == -1) {
+                    if (encadrantId <= 0) {
                         Toast.makeText(
-                                getContext(),
+                                requireContext(),
                                 "Encadrant non identifié",
                                 Toast.LENGTH_SHORT
                         ).show();
@@ -96,7 +99,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                                 adapter.notifyDataSetChanged();
 
                                 Toast.makeText(
-                                        getContext(),
+                                        requireContext(),
                                         "Étudiant encadré ✅",
                                         Toast.LENGTH_SHORT
                                 ).show();
@@ -104,7 +107,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                             } else if (response.code() == 409) {
 
                                 Toast.makeText(
-                                        getContext(),
+                                        requireContext(),
                                         "Projet déjà encadré",
                                         Toast.LENGTH_SHORT
                                 ).show();
@@ -112,7 +115,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                             } else {
 
                                 Toast.makeText(
-                                        getContext(),
+                                        requireContext(),
                                         "Erreur serveur : " + response.code(),
                                         Toast.LENGTH_SHORT
                                 ).show();
@@ -125,7 +128,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                                 Throwable t
                         ) {
                             Toast.makeText(
-                                    getContext(),
+                                    requireContext(),
                                     "Erreur réseau",
                                     Toast.LENGTH_SHORT
                             ).show();
@@ -156,6 +159,13 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                     int position,
                     long id
             ) {
+
+                // ✅ IGNORER le premier appel automatique
+                if (firstSelection) {
+                    firstSelection = false;
+                    return;
+                }
+
                 String selected = filieres[position];
                 chargerEtudiants(
                         selected.equals("Toutes") ? null : selected
@@ -166,7 +176,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // 🔥 Chargement initial
+        // 🔥 Chargement initial (OK)
         chargerEtudiants(null);
 
         return view;
@@ -197,7 +207,7 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                             Throwable t
                     ) {
                         Toast.makeText(
-                                getContext(),
+                                requireContext(),
                                 "Erreur chargement étudiants",
                                 Toast.LENGTH_SHORT
                         ).show();
@@ -205,9 +215,10 @@ public class EtudiantsDisponiblesFragment extends Fragment {
                 });
     }
 
+    // ✅ CORRECTION CLÉ : même SharedPreferences partout
     private int getEncadrantId() {
         SharedPreferences sp = requireContext()
-                .getSharedPreferences("auth", Context.MODE_PRIVATE);
+                .getSharedPreferences("user_session", Context.MODE_PRIVATE);
         return sp.getInt("user_id", -1);
     }
 }
