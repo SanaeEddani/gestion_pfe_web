@@ -29,6 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Déclare ton DashboardAdminActivity ici -->
+        <activity android:name=".ui.admin.DashboardAdminActivity" />
 
         <!-- =========================
              Authentification / Utilisateur

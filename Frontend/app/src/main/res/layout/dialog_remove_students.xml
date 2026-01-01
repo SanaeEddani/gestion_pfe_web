@@ -6,10 +6,12 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/editNumApogeeRemove"
+        android:id="@+id/editNomPrenomStudentRemove"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Numéro Apogée" />
+        android:hint="Nom et prénom de l'étudiant" />
+
+
 
     <LinearLayout
         android:id="@+id/containerApogeeListRemove"

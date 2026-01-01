@@ -15,6 +15,9 @@ import com.example.frontend.api.AuthApi;
 import com.example.frontend.api.RetrofitClient;
 import com.example.frontend.model.JwtResponse;
 import com.example.frontend.model.LoginRequest;
+import com.example.frontend.ui.admin.DashboardAdminActivity;
+
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -117,10 +120,8 @@ public class MainActivity extends AppCompatActivity {
                            ========================= */
                         switch (role) {
                             case 1: // Admin
-                                startActivity(new Intent(
-                                        MainActivity.this,
-                                        AdminActivity.class
-                                ));
+                                startActivity(new Intent(MainActivity.this, DashboardAdminActivity.class));
+
                                 break;
 
                             case 2: // Étudiant

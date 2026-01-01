@@ -83,8 +83,9 @@ public class AdminService {
 
         List<String> etudiants = e.getProjetsEncadres()
                 .stream()
-                .map(p -> p.getEtudiant().getNom())
+                .map(p -> p.getEtudiant().getNom() + " " + p.getEtudiant().getPrenom())
                 .collect(Collectors.toList());
+
 
         dto.setEtudiants(etudiants);
         return dto;
@@ -161,5 +162,39 @@ public class AdminService {
             }
         }
     }
+    public DashboardStatsDTO getDashboardStats() {
+
+        DashboardStatsDTO dto = new DashboardStatsDTO();
+
+        // Étudiants
+        List<Utilisateur> etudiants =
+                utilisateurRepository.findByRole_Name("etudiant");
+
+        long affectes = etudiants.stream()
+                .filter(e ->
+                        projetRepository.findByEtudiant_Id(e.getId())
+                                .map(p -> p.getEncadrant() != null)
+                                .orElse(false)
+                ).count();
+
+        dto.setTotalEtudiants(etudiants.size());
+        dto.setEtudiantsAffectes((int) affectes);
+        dto.setEtudiantsNonAffectes(etudiants.size() - (int) affectes);
+
+        // Encadrants
+        List<Utilisateur> encadrants =
+                utilisateurRepository.findByRole_Name("encadrant");
+
+        long avecEtudiants = encadrants.stream()
+                .filter(e -> !e.getProjetsEncadres().isEmpty())
+                .count();
+
+        dto.setTotalEncadrants(encadrants.size());
+        dto.setEncadrantsAvecEtudiants((int) avecEtudiants);
+        dto.setEncadrantsSansEtudiants(encadrants.size() - (int) avecEtudiants);
+
+        return dto;
+    }
+
 
 }

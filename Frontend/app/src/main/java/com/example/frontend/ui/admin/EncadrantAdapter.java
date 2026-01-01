@@ -8,6 +8,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.frontend.R;
 import com.example.frontend.model.EncadrantAdmin;
+import com.example.frontend.model.StudentAdmin;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +61,17 @@ public class EncadrantAdapter extends RecyclerView.Adapter<EncadrantAdapter.View
 
         String etudiantsStr = "Étudiants: ";
         if (e.etudiants != null && !e.etudiants.isEmpty()) {
-            etudiantsStr += String.join(", ", e.etudiants);
+            List<String> nomsComplets = new ArrayList<>();
+            for (String nomEtudiant : e.etudiants) {
+                nomsComplets.add(nomEtudiant);
+            }
+
+            etudiantsStr += String.join(", ", nomsComplets);
         } else {
             etudiantsStr += "0";
         }
         holder.etudiants.setText(etudiantsStr);
+
 
         // ======= RAJOUT DES ICONES =======
         holder.btnAdd.setImageResource(R.drawable.ic_add);       // ic_add pour ajouter

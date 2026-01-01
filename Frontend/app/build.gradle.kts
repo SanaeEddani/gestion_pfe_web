@@ -17,11 +17,10 @@ android {
     }
 
     buildTypes {
-        debug {
+        getByName("debug") {
             isDebuggable = true
         }
-
-        release {
+        getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -30,33 +29,26 @@ android {
         }
     }
 
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_17
     }
-
-    // Note: buildToolsVersion n'est plus nécessaire à partir d'AGP 7.0.0, mais si vous voulez le spécifier, utilisez une version existante.
-    // buildToolsVersion = "34.0.0"
 }
 
 dependencies {
-
     // AndroidX
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
 
-    // 🔴 FORCER FRAGMENT (clé du problème)
+    // Fragment & Lifecycle
     implementation(libs.fragment)
-
-    // 🔴 FORCER LIFECYCLE
     implementation(libs.lifecycle.runtime)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
 
-    // 🔴 NAVIGATION (versions cohérentes)
+    // Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
@@ -70,4 +62,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Graphiques
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

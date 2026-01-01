@@ -10,5 +10,12 @@ public class EncadrantAdmin {
     public String email;
     public String codeProf;   // <-- ajouté
     public String departement;
+    // 🔴 IMPORTANT : List<String> et NON StudentAdmin
     public List<String> etudiants;
+
+
+    public Long getId() {
+        return id;
+    }
+
 }
