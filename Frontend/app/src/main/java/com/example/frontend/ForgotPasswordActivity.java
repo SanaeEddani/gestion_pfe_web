@@ -48,7 +48,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         // 2. Créer l'instance Retrofit avec l'OkHttpClient configuré
         // Remplacez BASE_URL par votre URL de base réelle
-        String BASE_URL = "http://172.17.206.246:9090/"; // À modifier selon votre configuration
+        String BASE_URL = "http://10.41.223.37:9090/"; // À modifier selon votre configuration
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)

@@ -1,4 +1,4 @@
-package com.example.Backend.dto;
+package com.example.Backend.dto.admin;
 
 public class SoutenanceDTO {
     public Long id;
@@ -8,4 +8,9 @@ public class SoutenanceDTO {
     public String nomEncadrant;
     public String departement;
     public int nombreEtudiants;
+
+    // Ajout pour l’étudiant
+    public String nomEtudiant;
+    public String prenomEtudiant;
 }
+

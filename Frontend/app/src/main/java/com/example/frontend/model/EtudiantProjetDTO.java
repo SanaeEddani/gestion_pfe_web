@@ -21,4 +21,21 @@ public class EtudiantProjetDTO {
     public String getEntreprise() { return entreprise; }
     public String getDateDebut() { return dateDebut; }
     public String getDateFin() { return dateFin; }
+
+    // Ajout de getId pour simplifier l'accès à l'ID du projet
+    public int getId() {
+        return projetId;
+    }
+
+    public String getNomEtudiant() {
+        return nom != null ? nom : "";
+    }
+
+    public String getPrenomEtudiant() {
+        return prenom != null ? prenom : "";
+    }
+
+    public String getDepartement() {
+        return filiere != null ? filiere : "";
+    }
 }

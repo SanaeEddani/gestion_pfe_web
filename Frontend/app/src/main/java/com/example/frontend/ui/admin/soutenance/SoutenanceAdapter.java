@@ -1,38 +1,22 @@
-package com.example.frontend.ui.admin;
+package com.example.frontend.ui.admin.soutenance;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.*;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.R;
-import com.example.frontend.api.AdminApi;
-import com.example.frontend.model.EtudiantProjetDTO;
-import com.example.frontend.model.Salle;
+import com.example.frontend.model.SoutenanceDTO;
 
 import java.util.List;
 
-public class SoutenanceAdapter
-        extends RecyclerView.Adapter<SoutenanceAdapter.ViewHolder> {
+public class SoutenanceAdapter extends RecyclerView.Adapter<SoutenanceAdapter.ViewHolder> {
 
-    private final List<EtudiantProjetDTO> projets;
-    private final List<Salle> salles;
-    private final AdminApi api;
-    private final Context context;
+    private final List<SoutenanceDTO> soutenances;
 
-    public SoutenanceAdapter(List<EtudiantProjetDTO> projets,
-                             List<Salle> salles,
-                             AdminApi api,
-                             Context context) {
-        this.projets = projets;
-        this.salles = salles;
-        this.api = api;
-        this.context = context;
+    public SoutenanceAdapter(List<SoutenanceDTO> soutenances) {
+        this.soutenances = soutenances;
     }
 
     @NonNull
@@ -44,38 +28,31 @@ public class SoutenanceAdapter
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder h, int position) {
-        EtudiantProjetDTO p = projets.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
+        SoutenanceDTO s = soutenances.get(pos);
 
-        h.txtNom.setText(p.getNom() + " " + p.getPrenom());
-        h.txtFiliere.setText(p.getFiliere());
-        h.txtSujet.setText(p.getSujet());
-
-        h.btnProgrammer.setOnClickListener(v ->
-                new ProgrammerSoutenanceDialog(
-                        context,
-                        api,
-                        salles,
-                        p.getProjetId()
-                ).show()
-        );
+        h.tvDate.setText("Début : " + s.getDateDebut());
+        h.tvSalle.setText("Salle : " + s.getSalle());
+        h.tvEncadrant.setText("Encadrant : " + s.getNomEncadrant());
+        h.tvDept.setText("Département : " + s.getDepartement());
+        h.tvNb.setText("Étudiants : " + s.getNombreEtudiants());
     }
 
     @Override
     public int getItemCount() {
-        return projets.size();
+        return soutenances.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNom, txtFiliere, txtSujet;
-        Button btnProgrammer;
+        TextView tvDate, tvSalle, tvEncadrant, tvDept, tvNb;
 
         ViewHolder(View v) {
             super(v);
-            txtNom = v.findViewById(R.id.txtNom);
-            txtFiliere = v.findViewById(R.id.txtFiliere);
-            txtSujet = v.findViewById(R.id.txtSujet);
-            btnProgrammer = v.findViewById(R.id.btnProgrammer);
+            tvDate = v.findViewById(R.id.tvDate);
+            tvSalle = v.findViewById(R.id.tvSalle);
+            tvEncadrant = v.findViewById(R.id.tvEncadrant);
+            tvDept = v.findViewById(R.id.tvDepartement);
+            tvNb = v.findViewById(R.id.tvNbEtudiants);
         }
     }
 }

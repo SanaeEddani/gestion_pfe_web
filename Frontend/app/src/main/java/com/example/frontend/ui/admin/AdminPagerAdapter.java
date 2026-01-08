@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.*;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.frontend.ui.admin.soutenance.SoutenancesFragment;
+
 public class AdminPagerAdapter extends FragmentStateAdapter {
 
     public AdminPagerAdapter(@NonNull FragmentActivity fa) {
@@ -13,11 +15,20 @@ public class AdminPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return position == 0 ? new StudentFragment() : new EncadrantFragment();
+        switch (position) {
+            case 0:
+                return new StudentFragment();
+            case 1:
+                return new EncadrantFragment();
+            case 2:
+                return new SoutenancesFragment(); // ✅ NOUVEAU, indépendant
+            default:
+                return new StudentFragment();
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3; // ✅ avant: 2
     }
 }

@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:padding="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@android:color/white"
-    android:layout_marginBottom="8dp"
-    android:elevation="2dp">
+    android:layout_marginBottom="8dp">
 
     <TextView
-        android:id="@+id/txtNom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nom Prénom"
+        android:id="@+id/tvDate"
         android:textStyle="bold"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/txtFiliere"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Filière"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:id="@+id/txtSujet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sujet du projet"
-        android:textSize="14sp"
-        android:paddingBottom="6dp"/>
-
-    <Button
-        android:id="@+id/btnProgrammer"
+        android:textSize="16sp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Programmer soutenance"/>
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvSalle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvEncadrant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvDepartement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvNbEtudiants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

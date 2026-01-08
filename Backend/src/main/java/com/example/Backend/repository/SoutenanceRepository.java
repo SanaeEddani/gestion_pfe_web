@@ -1,4 +1,10 @@
 package com.example.Backend.repository;
 
-public class SoutenanceRepository {
+import com.example.Backend.model.Soutenance;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Arrays;
+
+public interface SoutenanceRepository extends JpaRepository<Soutenance, Long> {
+
 }
