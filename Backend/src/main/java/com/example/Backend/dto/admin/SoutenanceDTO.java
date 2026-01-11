@@ -1,7 +1,7 @@
 package com.example.Backend.dto.admin;
 
 public class SoutenanceDTO {
-    public Long id;
+    public Long projetId;
     public String dateDebut;
     public String dateFin;
     public String salle;
@@ -12,5 +12,8 @@ public class SoutenanceDTO {
     // Ajout pour l’étudiant
     public String nomEtudiant;
     public String prenomEtudiant;
+
+
+    public Long salleId;
 }
 

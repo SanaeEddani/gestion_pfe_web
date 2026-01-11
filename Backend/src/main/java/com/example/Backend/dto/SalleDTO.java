@@ -1,20 +1,13 @@
-package com.example.Backend.model;
+package com.example.Backend.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "salle")
-public class Salle {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class SalleDTO {
     private Long id;
-
     private String nom;
 
-    public Salle() {}
+    public SalleDTO() {}
 
-    public Salle(String nom) {
+    public SalleDTO(Long id, String nom) {
+        this.id = id;
         this.nom = nom;
     }
 
@@ -23,4 +16,7 @@ public class Salle {
 
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
+
+    @Override
+    public String toString() { return nom; } // Pour affichage dans Spinner
 }

@@ -31,4 +31,9 @@ public class Salle {
     public void setNom(String nom) {
         this.nom = nom;
     }
+
+    @Override
+    public String toString() {
+        return nom; // Important pour l'affichage dans le Spinner
+    }
 }
