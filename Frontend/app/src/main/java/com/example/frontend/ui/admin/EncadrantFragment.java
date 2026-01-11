@@ -124,6 +124,15 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
                             }
 
                             if (!apogees.isEmpty()) {
+                                // Vérifier limite 10 étudiants
+                                int currentCount = encadrant.etudiants != null ? encadrant.etudiants.size() : 0;
+                                if (currentCount + apogees.size() > 10) {
+                                    Toast.makeText(getContext(),
+                                            "Impossible : cet encadrant ne peut pas avoir plus de 10 étudiants",
+                                            Toast.LENGTH_LONG).show();
+                                    return; // on sort sans envoyer la requête
+                                }
+
                                 api.addStudentsToEncadrant(encadrant.getId(), apogees).enqueue(new Callback<Void>() {
                                     @Override
                                     public void onResponse(Call<Void> call, Response<Void> response) {

@@ -15,4 +15,5 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
 
     // ✅ Version List (si plusieurs projets possibles)
     List<Projet> findByEtudiantId(Long etudiantId);
+    long countByEncadrant_Id(Long encadrantId);
 }

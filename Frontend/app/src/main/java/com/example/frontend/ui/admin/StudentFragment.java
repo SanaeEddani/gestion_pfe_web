@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import org.json.JSONObject;
+
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -207,10 +209,17 @@ public class StudentFragment extends Fragment implements StudentAdapter.OnStuden
                         dialog.dismiss();
                         loadStudents(getView().findViewById(R.id.recyclerStudents));
                     } else {
-                        Toast.makeText(getContext(),
-                                "Erreur serveur",
-                                Toast.LENGTH_LONG).show();
+                        try {
+                            String errorJson = response.errorBody().string();
+                            JSONObject obj = new JSONObject(errorJson);
+                            String errorMsg = obj.has("message") ? obj.getString("message") : "Erreur serveur";
+                            Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Erreur serveur", Toast.LENGTH_LONG).show();
+                        }
+
                     }
+
                 }
 
                 @Override
