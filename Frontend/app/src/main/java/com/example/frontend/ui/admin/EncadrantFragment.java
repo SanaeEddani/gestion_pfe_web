@@ -84,7 +84,6 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
         dialog.setContentView(R.layout.dialog_add_students);
 
         EditText editNomPrenom = dialog.findViewById(R.id.editNomPrenomStudent);
-
         LinearLayout container = dialog.findViewById(R.id.containerApogeeList);
         Button btnAdd = dialog.findViewById(R.id.btnAddApogee);
         Button btnConfirm = dialog.findViewById(R.id.btnConfirmAdd);
@@ -106,7 +105,6 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
             if (!studentsList.isEmpty()) {
                 AdminApi api = RetrofitClientAdmin.getInstance(requireContext()).create(AdminApi.class);
 
-                // Récupérer la liste des étudiants pour obtenir les numéros Apogée
                 api.getStudents().enqueue(new Callback<List<StudentAdmin>>() {
                     @Override
                     public void onResponse(Call<List<StudentAdmin>> call, Response<List<StudentAdmin>> response) {
@@ -124,13 +122,12 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
                             }
 
                             if (!apogees.isEmpty()) {
-                                // Vérifier limite 10 étudiants
                                 int currentCount = encadrant.etudiants != null ? encadrant.etudiants.size() : 0;
                                 if (currentCount + apogees.size() > 10) {
                                     Toast.makeText(getContext(),
                                             "Impossible : cet encadrant ne peut pas avoir plus de 10 étudiants",
                                             Toast.LENGTH_LONG).show();
-                                    return; // on sort sans envoyer la requête
+                                    return;
                                 }
 
                                 api.addStudentsToEncadrant(encadrant.getId(), apogees).enqueue(new Callback<Void>() {
@@ -159,16 +156,8 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
             }
         });
 
-
         dialog.show();
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Recharge les encadrants à chaque fois que le fragment devient visible
-        refreshEncadrants();
-    }
-
 
     @Override
     public void onRemoveStudentsClicked(EncadrantAdmin encadrant) {
@@ -176,8 +165,6 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
         dialog.setContentView(R.layout.dialog_remove_students);
 
         EditText editNomPrenomRemove = dialog.findViewById(R.id.editNomPrenomStudentRemove);
-
-
         LinearLayout container = dialog.findViewById(R.id.containerApogeeListRemove);
         Button btnAdd = dialog.findViewById(R.id.btnAddApogeeRemove);
         Button btnConfirm = dialog.findViewById(R.id.btnConfirmRemove);
@@ -185,7 +172,6 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
         List<String> studentsListRemove = new ArrayList<>();
 
         btnAdd.setOnClickListener(v -> {
-
             String nomPrenom = editNomPrenomRemove.getText().toString().trim();
             if (!nomPrenom.isEmpty() && !studentsListRemove.contains(nomPrenom)) {
                 studentsListRemove.add(nomPrenom);
@@ -194,7 +180,6 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
                 container.addView(tv);
                 editNomPrenomRemove.setText("");
             }
-
         });
 
         btnConfirm.setOnClickListener(v -> {
@@ -218,18 +203,24 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
                             }
 
                             if (!apogees.isEmpty()) {
-                                api.removeStudentsFromEncadrant(encadrant.getId(), apogees).enqueue(new Callback<Void>() {
-                                    @Override
-                                    public void onResponse(Call<Void> call, Response<Void> response) {
-                                        Toast.makeText(getContext(), "Suppression réussie", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                        refreshEncadrants();
-                                    }
-                                    @Override
-                                    public void onFailure(Call<Void> call, Throwable t) {
-                                        Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                                api.removeStudentsFromEncadrant(encadrant.getId(), apogees)
+                                        .enqueue(new Callback<Void>() {
+                                            @Override
+                                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                                if (response.isSuccessful()) {
+                                                    Toast.makeText(getContext(), "Suppression réussie", Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+                                                    refreshEncadrants(); // ✅ recharge depuis le serveur
+                                                } else {
+                                                    Toast.makeText(getContext(), "Erreur suppression", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Void> call, Throwable t) {
+                                                Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                                            }
+                                        });
                             } else {
                                 Toast.makeText(getContext(), "Aucun étudiant trouvé", Toast.LENGTH_SHORT).show();
                             }
@@ -244,8 +235,13 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
             }
         });
 
-
         dialog.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshEncadrants();
     }
 
     private void refreshEncadrants() {
@@ -257,6 +253,7 @@ public class EncadrantFragment extends Fragment implements EncadrantAdapter.OnEn
                     adapter.updateData(response.body());
                 }
             }
+
             @Override
             public void onFailure(Call<List<EncadrantAdmin>> call, Throwable t) {}
         });

@@ -5,10 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.frontend.R;
 import com.example.frontend.model.EncadrantAdmin;
-import com.example.frontend.model.StudentAdmin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +34,17 @@ public class EncadrantAdapter extends RecyclerView.Adapter<EncadrantAdapter.View
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nomPrenom, email, departement, etudiants;
-        ImageButton btnAdd, btnRemove;
+        TextView nomPrenom, email, departement;
+        ImageButton btnAdd, btnRemove, btnViewStudents; // bouton œil
 
         ViewHolder(View v) {
             super(v);
             nomPrenom = v.findViewById(R.id.textNomPrenom);
             email = v.findViewById(R.id.textEmail);
             departement = v.findViewById(R.id.textDepartement);
-            etudiants = v.findViewById(R.id.textEtudiants);
             btnAdd = v.findViewById(R.id.btnAdd);
             btnRemove = v.findViewById(R.id.btnRemove);
+            btnViewStudents = v.findViewById(R.id.btnViewStudents); // initialisation bouton œil
         }
     }
 
@@ -52,26 +55,11 @@ public class EncadrantAdapter extends RecyclerView.Adapter<EncadrantAdapter.View
     }
 
     @Override
-
     public void onBindViewHolder(ViewHolder holder, int position) {
         EncadrantAdmin e = displayedEncadrants.get(position);
         holder.nomPrenom.setText(e.nom + " " + e.prenom);
-        holder.email.setText("Email: " + e.email);
-        holder.departement.setText("Département: " + e.departement);
-
-        String etudiantsStr = "Étudiants: ";
-        if (e.etudiants != null && !e.etudiants.isEmpty()) {
-            List<String> nomsComplets = new ArrayList<>();
-            for (String nomEtudiant : e.etudiants) {
-                nomsComplets.add(nomEtudiant);
-            }
-
-            etudiantsStr += String.join(", ", nomsComplets);
-        } else {
-            etudiantsStr += "0";
-        }
-        holder.etudiants.setText(etudiantsStr);
-
+        holder.email.setText(e.email);
+        holder.departement.setText(e.departement);
 
         // ======= RAJOUT DES ICONES =======
         holder.btnAdd.setImageResource(R.drawable.ic_add);       // ic_add pour ajouter
@@ -80,14 +68,35 @@ public class EncadrantAdapter extends RecyclerView.Adapter<EncadrantAdapter.View
         // ======= CLICK LISTENERS =======
         holder.btnAdd.setOnClickListener(v -> listener.onAddStudentsClicked(e));
         holder.btnRemove.setOnClickListener(v -> listener.onRemoveStudentsClicked(e));
-    }
 
+        // ======= BOUTON ŒIL POUR AFFICHER LES ÉTUDIANTS =======
+        holder.btnViewStudents.setOnClickListener(v -> {
+            if (e.etudiants == null || e.etudiants.isEmpty()) {
+                new AlertDialog.Builder(holder.itemView.getContext())
+                        .setTitle("Étudiants")
+                        .setMessage("Aucun étudiant")
+                        .setPositiveButton("OK", null)
+                        .show();
+            } else {
+                StringBuilder sb = new StringBuilder();
+                for (String nomEtudiant : e.etudiants) {
+                    sb.append("• ").append(nomEtudiant).append("\n");
+                }
+                new AlertDialog.Builder(holder.itemView.getContext())
+                        .setTitle("Étudiants de " + e.nom)
+                        .setMessage(sb.toString())
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
         return displayedEncadrants.size();
     }
 
+    // ======= FILTRAGE =======
     public void filter(String name, String departement, String nbrEtudiantsStr) {
         displayedEncadrants.clear();
         int nbrEtudiants = -1;
@@ -103,6 +112,7 @@ public class EncadrantAdapter extends RecyclerView.Adapter<EncadrantAdapter.View
         notifyDataSetChanged();
     }
 
+    // ======= MISE À JOUR DES DONNÉES =======
     public void updateData(List<EncadrantAdmin> newData) {
         allEncadrants.clear();
         allEncadrants.addAll(newData);

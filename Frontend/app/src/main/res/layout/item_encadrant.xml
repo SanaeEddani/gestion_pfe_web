@@ -2,61 +2,109 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/card_background"
     android:orientation="horizontal"
+    android:background="@drawable/card_background"
     android:padding="12dp"
-    android:layout_margin="6dp">
+    android:layout_margin="6dp"
+    android:gravity="center_vertical">
 
-    <!-- Colonne 1: Informations personnelles -->
+    <!-- Colonne 1 : Infos encadrant -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_weight="2"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <!-- Nom et prénom -->
         <TextView
             android:id="@+id/textNomPrenom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"/>
 
-        <TextView
-            android:id="@+id/textEmail"
+        <!-- Email avec icône -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/textDepartement"
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_email"
+                android:tint="@color/primaryDarkBlue"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/textEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textSecondary"/>
+        </LinearLayout>
+
+        <!-- Département avec icône -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_school"
+                android:tint="@color/primaryDarkBlue"
+                android:layout_marginEnd="6dp"/>
+
+            <TextView
+                android:id="@+id/textDepartement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textSecondary"/>
+        </LinearLayout>
+
     </LinearLayout>
 
-    <!-- Colonne 2: Étudiants encadrés -->
-    <TextView
-        android:id="@+id/textEtudiants"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="8dp"/>
+    <!-- Colonne 2 : Bouton voir étudiants -->
+    <ImageButton
+        android:id="@+id/btnViewStudents"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:background="@null"
+        android:src="@drawable/ic_eye"
+        android:tint="@color/primaryDarkBlue"
+        android:contentDescription="Voir étudiants"
+        android:layout_marginEnd="6dp"/>
 
-    <!-- Colonne 3: Actions -->
+    <!-- Colonne 3 : Actions (+ / -) -->
     <LinearLayout
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_height="wrap_content">
+        android:gravity="center_vertical">
 
         <ImageButton
             android:id="@+id/btnAdd"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@null"
-            android:layout_marginEnd="8dp"/>
+            android:src="@drawable/ic_add"
+            android:tint="@color/green_600"
+            android:layout_marginEnd="6dp"/>
 
         <ImageButton
             android:id="@+id/btnRemove"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:background="@null"/>
+            android:background="@null"
+            android:src="@drawable/ic_remove"
+            android:tint="@color/red_600"/>
     </LinearLayout>
+
 </LinearLayout>

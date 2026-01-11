@@ -184,11 +184,6 @@ public class AdminService {
     }
 
     public void removeStudentsFromEncadrant(Long encadrantId, List<String> numAppogeeList) {
-        Utilisateur encadrant = utilisateurRepository.findById(encadrantId).orElseThrow();
-        long nbEtudiantsActuels = projetRepository.countByEncadrant_Id(encadrantId);
-        if (nbEtudiantsActuels + numAppogeeList.size() > 10) {
-            throw new RuntimeException("Cet encadrant ne peut pas avoir plus de 10 étudiants au total.");
-        }
         for (String numAppogee : numAppogeeList) {
             Utilisateur etudiant = utilisateurRepository.findAll().stream()
                     .filter(u -> u.getAppogee() != null && numAppogee.equals(u.getAppogee().getNumAppogee()))
@@ -196,18 +191,14 @@ public class AdminService {
                     .orElseThrow(() -> new RuntimeException("Étudiant avec Apogée " + numAppogee + " introuvable"));
 
             Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId())
-                    .orElseGet(() -> {
-                        Projet p = new Projet();
-                        p.setEtudiant(etudiant);
-                        return p;
-                    });
+                    .orElseThrow(() -> new RuntimeException("Projet de l'étudiant introuvable"));
 
-            projet.setEncadrant(encadrant);
+            // Désaffecter l'étudiant
+            projet.setEncadrant(null);
             projetRepository.save(projet);
-
-            nbEtudiantsActuels++; // incrémenter pour suivre le nombre
         }
     }
+
     public DashboardStatsDTO getDashboardStats() {
 
         DashboardStatsDTO dto = new DashboardStatsDTO();

@@ -1,49 +1,47 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="12dp"
+    android:background="#F5F7FA">
 
-    <!-- ===== ZONE FILTRAGE ===== -->
+    <!-- FILTRAGE -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/card_background"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="12dp"
+        android:layout_marginBottom="10dp">
 
         <EditText
             android:id="@+id/editFilterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nom / Prénom" />
+            android:hint="Nom / Prénom"
+            android:background="@drawable/bg_input_blue"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/editFilterApogee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Apogée"
-            android:inputType="number" />
-
-        <TextView
-            android:id="@+id/textStatusLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Statut :"
-            android:textStyle="bold"
-            android:layout_marginTop="6dp"/>
+            android:inputType="number"
+            android:background="@drawable/bg_input_blue"
+            android:layout_marginBottom="8dp"/>
 
         <Spinner
             android:id="@+id/spinnerStatus"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input_blue"/>
     </LinearLayout>
 
-    <!-- ===== LISTE DES ÉTUDIANTS (SCROLL ACTIF) ===== -->
+    <!-- LISTE -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerStudents"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="vertical"
-        android:overScrollMode="always"/>
+        android:layout_weight="1"/>
 </LinearLayout>
