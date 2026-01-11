@@ -4,14 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
-
     <TextView
         android:text="Gestion des PFE"
         android:textSize="26sp"
         android:textStyle="bold"
+        android:textColor="@color/primaryDarkBlue"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"/>
+
+
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChartEtudiants"
@@ -29,5 +32,11 @@
         android:id="@+id/btnGestion"
         android:text="Gestion Étudiants / Encadrants"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/primaryDarkBlue"
+        android:textColor="@android:color/white"/>
+
+
+
+
 </LinearLayout>

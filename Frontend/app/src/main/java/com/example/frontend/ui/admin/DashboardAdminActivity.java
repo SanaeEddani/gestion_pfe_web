@@ -12,11 +12,11 @@ import com.example.frontend.api.AdminApi;
 import com.example.frontend.api.RetrofitClientAdmin;
 import com.example.frontend.model.DashboardStats;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +38,10 @@ public class DashboardAdminActivity extends AppCompatActivity {
         pieChartEtudiants = findViewById(R.id.pieChartEtudiants);
         pieChartEncadrants = findViewById(R.id.pieChartEncadrants);
         btnGestion = findViewById(R.id.btnGestion);
+
+        // Bouton bleu avec texte blanc
+        btnGestion.setBackgroundTintList(getResources().getColorStateList(R.color.primaryDarkBlue));
+        btnGestion.setTextColor(Color.WHITE);
 
         AdminApi api = RetrofitClientAdmin
                 .getInstance(this)
@@ -65,19 +69,20 @@ public class DashboardAdminActivity extends AppCompatActivity {
 
     private void showPieCharts(DashboardStats stats) {
 
-        // --- Premier graphique : Étudiants ---
+        // --- Graphique Étudiants ---
         ArrayList<PieEntry> entriesEtudiants = new ArrayList<>();
         int totalEtudiants = stats.etudiantsAffectes + stats.etudiantsNonAffectes;
         float pourcAffectes = totalEtudiants == 0 ? 0 : (stats.etudiantsAffectes * 100f / totalEtudiants);
         float pourcNonAffectes = totalEtudiants == 0 ? 0 : (stats.etudiantsNonAffectes * 100f / totalEtudiants);
 
-        entriesEtudiants.add(new PieEntry(pourcAffectes, "")); // pas de texte
-        entriesEtudiants.add(new PieEntry(pourcNonAffectes, ""));
+        entriesEtudiants.add(new PieEntry(pourcAffectes, "Affectés"));
+        entriesEtudiants.add(new PieEntry(pourcNonAffectes, "Non affectés"));
 
-        PieDataSet dataSetEtudiants = new PieDataSet(entriesEtudiants, "Étudiants affectés / non affectés");
-        dataSetEtudiants.setColors(ColorTemplate.MATERIAL_COLORS);
+        PieDataSet dataSetEtudiants = new PieDataSet(entriesEtudiants, "");
+        int[] colorsEtudiants = {Color.parseColor("#4CAF50"), Color.parseColor("#F44336")};
+        dataSetEtudiants.setColors(colorsEtudiants);
         dataSetEtudiants.setValueTextColor(Color.BLACK);
-        dataSetEtudiants.setValueFormatter(new PercentFormatter()); // % automatique
+        dataSetEtudiants.setValueFormatter(new PercentFormatter());
         dataSetEtudiants.setValueTextSize(14f);
 
         PieData dataEtudiants = new PieData(dataSetEtudiants);
@@ -86,20 +91,33 @@ public class DashboardAdminActivity extends AppCompatActivity {
         pieChartEtudiants.getDescription().setEnabled(false);
         pieChartEtudiants.setCenterText("Étudiants");
         pieChartEtudiants.setCenterTextSize(16f);
+        pieChartEtudiants.setDrawEntryLabels(false); // Supprime texte sur les parts
+
+        // Légende
+        Legend legendEtudiants = pieChartEtudiants.getLegend();
+        legendEtudiants.setEnabled(true);
+        legendEtudiants.setTextSize(14f);
+        legendEtudiants.setTextColor(Color.BLACK);
+        legendEtudiants.setWordWrapEnabled(true);
+        legendEtudiants.setForm(Legend.LegendForm.CIRCLE);
+        legendEtudiants.setXEntrySpace(25f); // Espace horizontal entre légendes
+        legendEtudiants.setYEntrySpace(15f); // Espace vertical entre légendes
+
         pieChartEtudiants.animateY(1000);
         pieChartEtudiants.invalidate();
 
-        // --- Deuxième graphique : Encadrants ---
+        // --- Graphique Encadrants ---
         ArrayList<PieEntry> entriesEncadrants = new ArrayList<>();
         int totalEncadrants = stats.encadrantsAvecEtudiants + stats.encadrantsSansEtudiants;
         float pourcAvec = totalEncadrants == 0 ? 0 : (stats.encadrantsAvecEtudiants * 100f / totalEncadrants);
         float pourcSans = totalEncadrants == 0 ? 0 : (stats.encadrantsSansEtudiants * 100f / totalEncadrants);
 
-        entriesEncadrants.add(new PieEntry(pourcAvec, ""));
-        entriesEncadrants.add(new PieEntry(pourcSans, ""));
+        entriesEncadrants.add(new PieEntry(pourcAvec, "Avec étudiants"));
+        entriesEncadrants.add(new PieEntry(pourcSans, "Sans étudiants"));
 
-        PieDataSet dataSetEncadrants = new PieDataSet(entriesEncadrants, "Encadrants avec / sans étudiants");
-        dataSetEncadrants.setColors(ColorTemplate.COLORFUL_COLORS);
+        PieDataSet dataSetEncadrants = new PieDataSet(entriesEncadrants, "");
+        int[] colorsEncadrants = {Color.parseColor("#2196F3"), Color.parseColor("#FFC107")};
+        dataSetEncadrants.setColors(colorsEncadrants);
         dataSetEncadrants.setValueTextColor(Color.BLACK);
         dataSetEncadrants.setValueFormatter(new PercentFormatter());
         dataSetEncadrants.setValueTextSize(14f);
@@ -110,6 +128,18 @@ public class DashboardAdminActivity extends AppCompatActivity {
         pieChartEncadrants.getDescription().setEnabled(false);
         pieChartEncadrants.setCenterText("Encadrants");
         pieChartEncadrants.setCenterTextSize(16f);
+        pieChartEncadrants.setDrawEntryLabels(false);
+
+        // Légende
+        Legend legendEncadrants = pieChartEncadrants.getLegend();
+        legendEncadrants.setEnabled(true);
+        legendEncadrants.setTextSize(14f);
+        legendEncadrants.setTextColor(Color.BLACK);
+        legendEncadrants.setWordWrapEnabled(true);
+        legendEncadrants.setForm(Legend.LegendForm.CIRCLE);
+        legendEncadrants.setXEntrySpace(35f); // Espace horizontal
+        legendEncadrants.setYEntrySpace(15f); // Espace vertical
+
         pieChartEncadrants.animateY(1000);
         pieChartEncadrants.invalidate();
     }
