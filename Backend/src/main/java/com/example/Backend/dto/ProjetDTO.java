@@ -2,6 +2,9 @@ package com.example.Backend.dto;
 
 public class ProjetDTO {
 
+
+    private Long id;
+
     private String sujet;
     private String description;
     private String entreprise;
@@ -12,6 +15,14 @@ public class ProjetDTO {
         this.sujet = sujet;
         this.description = description;
         this.entreprise = entreprise;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSujet() { return sujet; }

@@ -2,6 +2,6 @@
 <network-security-config>
     <!-- Autoriser le trafic HTTP pour le backend local -->
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.140.122.35</domain>
+        <domain includeSubdomains="true">172.17.225.245</domain>
     </domain-config>
 </network-security-config>

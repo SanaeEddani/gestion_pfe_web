@@ -23,6 +23,9 @@ public class SecurityConfig {
                         .requestMatchers("/**").permitAll() // autoriser toutes les requêtes
                 );
 
+
         return http.build();
     }
+
+
 }

@@ -65,19 +65,19 @@
                 <!-- IP 1 -->
                 <data
                         android:scheme="http"
-                        android:host="192.168.56.1"
+                        android:host="10.41.223.37"
                         android:pathPrefix="/reset-password" />
 
                 <!-- IP 2 -->
                 <data
                         android:scheme="http"
-                        android:host="10.101.82.35"
+                        android:host="10.41.223.37"
                         android:pathPrefix="/reset-password" />
 
                 <!-- IP 3 -->
                 <data
                         android:scheme="http"
-                        android:host="192.168.43.16"
+                        android:host="10.41.223.37"
                         android:pathPrefix="/reset-password" />
             </intent-filter>
         </activity>

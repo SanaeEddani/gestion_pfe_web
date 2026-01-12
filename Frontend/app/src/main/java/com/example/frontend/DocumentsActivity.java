@@ -239,7 +239,7 @@ public class DocumentsActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         String url =
-                "http://192.168.1.9:9090/api/documents/etudiant/" + etudiantId;
+                "http://10.41.223.37:9090/api/documents/etudiant/" + etudiantId;
 
         com.android.volley.RequestQueue queue =
                 com.android.volley.toolbox.Volley.newRequestQueue(this);
