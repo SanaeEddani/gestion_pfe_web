@@ -4,6 +4,39 @@
     <color name="accentBlue">#64B5F6</color>
     <color name="white">#FFFFFF</color>
     <color name="errorRed">#FF3B30</color> <!-- Couleur pour les règles du mot de passe -->
+    <!-- Couleurs principales -->
+    <color name="primary_color">#2196F3</color> <!-- Bleu Material -->
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="red">#F44336</color>
+    <color name="red_dark">#D32F2F</color>
+    <color name="red_light">#FF5252</color>
 
+    <!-- Couleurs secondaires -->
+    <color name="secondary_color">#FF4081</color> <!-- Rose Material -->
+    <color name="secondary_dark">#F50057</color>
+    <color name="secondary_light">#FF80AB</color>
+
+    <!-- Couleurs neutres -->
+
+    <color name="black">#000000</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="gray_light">#EEEEEE</color>
+    <color name="gray_dark">#757575</color>
+
+    <!-- Couleurs de statut -->
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FF9800</color>
+    <color name="error">#F44336</color>
+    <color name="info">#2196F3</color>
+
+    <!-- Couleurs de fond -->
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- Couleurs de texte -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_hint">#BDBDBD</color>
     <color name="successGreen">#4CAF50</color>
 </resources>

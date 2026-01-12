@@ -1,12 +1,11 @@
 package com.example.frontend;
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -24,11 +23,14 @@ import com.example.frontend.api.AuthApi;
 import com.example.frontend.api.RetrofitClient;
 import com.example.frontend.model.UserRequest;
 import com.example.frontend.model.UserResponse;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SignupActivity extends AppCompatActivity {
+
+    private static final String TAG = "SIGNUP_DEBUG";
 
     RadioGroup roleGroup;
     RadioButton studentBtn, teacherBtn;
@@ -44,12 +46,19 @@ public class SignupActivity extends AppCompatActivity {
     // Règles mot de passe
     TextView ruleLength, ruleLowercase, ruleUppercase, ruleDigit, ruleSpecial;
 
+    // Retrofit
+    private AuthApi authApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // Bind views
+        Log.d(TAG, "onCreate() appelé");
+
+        /* =======================
+           Bind views
+           ======================= */
         roleGroup = findViewById(R.id.roleRadioGroup);
         studentBtn = findViewById(R.id.studentRadioButton);
         teacherBtn = findViewById(R.id.teacherRadioButton);
@@ -70,14 +79,15 @@ public class SignupActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         loginLink = findViewById(R.id.loginLink);
 
-        // Password rules
         ruleLength = findViewById(R.id.ruleLength);
         ruleLowercase = findViewById(R.id.ruleLowercase);
         ruleUppercase = findViewById(R.id.ruleUppercase);
         ruleDigit = findViewById(R.id.ruleDigit);
         ruleSpecial = findViewById(R.id.ruleSpecial);
 
-        // Spinners
+        /* =======================
+           Spinners
+           ======================= */
         filiereSpinner.setAdapter(new android.widget.ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"-- Choisir --", "GI", "GE", "TM", "GC", "RT"}));
@@ -86,8 +96,11 @@ public class SignupActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"-- Choisir --", "Informatique", "Maths", "Physique", "Management"}));
 
-        // Changement de rôle
+        /* =======================
+           Changement de rôle
+           ======================= */
         roleGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            Log.d(TAG, "Rôle changé : " + checkedId);
             if (checkedId == R.id.studentRadioButton) {
                 studentSection.setVisibility(View.VISIBLE);
                 teacherSection.setVisibility(View.GONE);
@@ -97,27 +110,37 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // Validation mot de passe en temps réel
+        /* =======================
+           Validation mot de passe
+           ======================= */
         passwordEditText.addTextChangedListener(passwordWatcher);
 
-        // Inscription
+        /* =======================
+           Retrofit
+           ======================= */
+        authApi = RetrofitClient
+                .getRetrofitInstance(this)
+                .create(AuthApi.class);
+
+        /* =======================
+           Actions
+           ======================= */
         registerButton.setOnClickListener(v -> {
+            Log.d(TAG, "Bouton S'inscrire cliqué");
             if (validateFields()) {
                 registerUser();
             }
         });
 
-        loginLink.setOnClickListener(v -> {
-            Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-            startActivity(intent);
-        });
-
+        loginLink.setOnClickListener(v ->
+                startActivity(new Intent(SignupActivity.this, MainActivity.class))
+        );
     }
-
 
     /* =======================
        PASSWORD VALIDATION
        ======================= */
+
     private final TextWatcher passwordWatcher = new TextWatcher() {
         @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -149,6 +172,7 @@ public class SignupActivity extends AppCompatActivity {
     /* =======================
        FORM VALIDATION
        ======================= */
+
     private boolean validateFields() {
 
         if (TextUtils.isEmpty(nomEditText.getText())) {
@@ -167,18 +191,18 @@ public class SignupActivity extends AppCompatActivity {
             return false;
         }
 
-        String expectedEmail = prenomEditText.getText().toString().trim().toLowerCase()
-                + "." +
-                nomEditText.getText().toString().trim().toLowerCase()
-                + "@uit.ac.ma";
+        String expectedEmail =
+                prenomEditText.getText().toString().trim().toLowerCase()
+                        + "." +
+                        nomEditText.getText().toString().trim().toLowerCase()
+                        + "@uit.ac.ma";
 
         if (!email.equals(expectedEmail)) {
             emailEditText.setError("Email doit être prenom.nom@uit.ac.ma");
             return false;
         }
 
-        String password = passwordEditText.getText().toString();
-        if (!isPasswordValid(password)) {
+        if (!isPasswordValid(passwordEditText.getText().toString())) {
             Toast.makeText(this, "Mot de passe non conforme", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -208,15 +232,13 @@ public class SignupActivity extends AppCompatActivity {
         return true;
     }
 
-    // Initialiser Retrofit
-    AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
-            .create(AuthApi.class);
-
     /* =======================
        API CALL
        ======================= */
+
     private void registerUser() {
+
+        Log.d(TAG, "registerUser() appelé");
 
         UserRequest request = new UserRequest();
         request.setNom(nomEditText.getText().toString().trim());
@@ -237,33 +259,43 @@ public class SignupActivity extends AppCompatActivity {
         registerButton.setEnabled(false);
         registerButton.setText("Inscription...");
 
-
-
         authApi.registerUser(request).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
 
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(SignupActivity.this,
+                    Toast.makeText(
+                            SignupActivity.this,
                             response.body().getMessage(),
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG
+                    ).show();
+
                     if (response.body().isSuccess()) finish();
                 } else {
-                    Toast.makeText(SignupActivity.this,
+                    Toast.makeText(
+                            SignupActivity.this,
                             "Erreur serveur",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG
+                    ).show();
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
+
+                Log.e(TAG, "Erreur réseau", t);
+
                 registerButton.setEnabled(true);
                 registerButton.setText("S’inscrire");
-                Toast.makeText(SignupActivity.this,
+
+                Toast.makeText(
+                        SignupActivity.this,
                         "Erreur réseau",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_LONG
+                ).show();
             }
         });
     }

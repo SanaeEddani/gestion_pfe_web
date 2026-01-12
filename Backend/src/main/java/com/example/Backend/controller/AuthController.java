@@ -22,9 +22,11 @@ public class AuthController {
     private final SignupService signupService;
     private final UtilisateurRepository userRepository;
 
-    public AuthController(AuthService authService,
-                          SignupService signupService,
-                          UtilisateurRepository userRepository) {
+    public AuthController(
+            AuthService authService,
+            SignupService signupService,
+            UtilisateurRepository userRepository
+    ) {
         this.authService = authService;
         this.signupService = signupService;
         this.userRepository = userRepository;
@@ -39,35 +41,42 @@ public class AuthController {
             Utilisateur user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
-            String token = authService.login(request.getEmail(), request.getPassword());
-
-            Map<String, Object> response = Map.of(
-                    "token", token,
-                    "role", user.getRole().getName() // ou getId() si tu veux
+            String token = authService.login(
+                    request.getEmail(),
+                    request.getPassword()
             );
+
+            // ✅ RÉPONSE COMPLÈTE (AVEC ID)
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("role", user.getRole().getName()); // admin / etudiant / encadrant
+            response.put("id", user.getId());               // 🔥 LIGNE MANQUANTE
 
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", e.getMessage()));
         }
     }
 
     /* =========================
-       REGISTER (SignupService)
+       REGISTER
        ========================= */
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody SignupRequest req) {
-
+    public ResponseEntity<Map<String, Object>> register(
+            @RequestBody SignupRequest req
+    ) {
         Map<String, Object> response = new HashMap<>();
 
         try {
             String result = signupService.signup(req);
 
-            boolean success = result.equalsIgnoreCase("Inscription réussie");
-
-            response.put("success", success);
+            response.put(
+                    "success",
+                    result.equalsIgnoreCase("Inscription réussie")
+            );
             response.put("message", result);
 
             return ResponseEntity.ok(response);
@@ -75,7 +84,9 @@ public class AuthController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Erreur serveur : " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(response);
         }
     }
 

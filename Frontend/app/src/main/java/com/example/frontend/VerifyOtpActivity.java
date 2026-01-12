@@ -42,7 +42,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
 
     // Initialiser Retrofit
     AuthApi authApi = RetrofitClient
-            .getRetrofitInstance()
+            .getRetrofitInstance(VerifyOtpActivity.this)
             .create(AuthApi.class);
 
     private void verify() {

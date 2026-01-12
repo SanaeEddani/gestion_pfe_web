@@ -2,6 +2,7 @@ package com.example.Backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "utilisateurs")
@@ -9,7 +10,7 @@ public class Utilisateur {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id; // ✅ Long partout (corrige Integer/Long)
 
     @Column(name = "nom")
     private String nom;
@@ -32,9 +33,9 @@ public class Utilisateur {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // =======================
-    // RELATIONS
-    // =======================
+    /* =======================
+       RELATIONS
+       ======================= */
 
     @ManyToOne
     @JoinColumn(name = "appogee_id")
@@ -48,9 +49,21 @@ public class Utilisateur {
     @JoinColumn(name = "role_id", nullable = false, updatable = false)
     private Role role;
 
-    // =======================
-    // GETTERS & SETTERS
-    // =======================
+    /* =======================
+       RELATIONS AVEC PROJET
+       ======================= */
+
+    // Étudiant → 1 projet max
+    @OneToOne(mappedBy = "etudiant")
+    private Projet projet;
+
+    // Encadrant → plusieurs projets
+    @OneToMany(mappedBy = "encadrant")
+    private List<Projet> projetsEncadres;
+
+    /* =======================
+       GETTERS & SETTERS
+       ======================= */
 
     public Long getId() {
         return id;
@@ -138,5 +151,21 @@ public class Utilisateur {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Projet getProjet() {
+        return projet;
+    }
+
+    public void setProjet(Projet projet) {
+        this.projet = projet;
+    }
+
+    public List<Projet> getProjetsEncadres() {
+        return projetsEncadres;
+    }
+
+    public void setProjetsEncadres(List<Projet> projetsEncadres) {
+        this.projetsEncadres = projetsEncadres;
     }
 }
