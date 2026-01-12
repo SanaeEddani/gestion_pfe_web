@@ -28,7 +28,7 @@ public class ProgrammerSoutenanceDialog {
 
     private final Context context;
     private final AdminApi api;
-    private final Long projetId;
+    private final long projetId;
 
     private Spinner spinnerSalles;
     private Button btnDebutPicker, btnFinPicker;
@@ -38,18 +38,26 @@ public class ProgrammerSoutenanceDialog {
 
     private List<Salle> listeSalles = new ArrayList<>();
 
-    // Formatter affichage
     private static final SimpleDateFormat displayFormatter =
             new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
 
-    // Formatter ISO pour backend
     private static final SimpleDateFormat isoFormatter =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
 
-    public ProgrammerSoutenanceDialog(Context context, AdminApi api, Long projetId) {
+    public ProgrammerSoutenanceDialog(Context context, AdminApi api) {
         this.context = context;
         this.api = api;
-        this.projetId = projetId;
+
+        // 🔹 Récupérer l'ID du projet depuis SharedPreferences
+        this.projetId = context.getSharedPreferences("admin_prefs", Context.MODE_PRIVATE)
+                .getLong("projet_id", -1);
+
+        if (this.projetId == -1) {
+            Toast.makeText(context, "ID du projet introuvable", Toast.LENGTH_SHORT).show();
+            Log.e("SoutenanceDebug", "ID du projet introuvable dans SharedPreferences");
+        } else {
+            Log.d("SoutenanceDebug", "ID du projet récupéré : " + this.projetId);
+        }
     }
 
     public void show() {
@@ -123,31 +131,24 @@ public class ProgrammerSoutenanceDialog {
         DatePickerDialog datePicker = new DatePickerDialog(
                 context,
                 (view, year, month, dayOfMonth) -> {
-
                     TimePickerDialog timePicker = new TimePickerDialog(
                             context,
                             (timeView, hourOfDay, minute) -> {
-
                                 Calendar selected = Calendar.getInstance();
                                 selected.set(year, month, dayOfMonth, hourOfDay, minute, 0);
 
                                 if (estDateDebut) {
                                     dateDebutCalendar = selected;
-                                    btnDebutPicker.setText(
-                                            "Début: " + displayFormatter.format(selected.getTime())
-                                    );
+                                    btnDebutPicker.setText("Début: " + displayFormatter.format(selected.getTime()));
                                 } else {
                                     dateFinCalendar = selected;
-                                    btnFinPicker.setText(
-                                            "Fin: " + displayFormatter.format(selected.getTime())
-                                    );
+                                    btnFinPicker.setText("Fin: " + displayFormatter.format(selected.getTime()));
                                 }
                             },
                             now.get(Calendar.HOUR_OF_DAY),
                             now.get(Calendar.MINUTE),
                             true
                     );
-
                     timePicker.show();
                 },
                 now.get(Calendar.YEAR),
@@ -159,50 +160,30 @@ public class ProgrammerSoutenanceDialog {
     }
 
     private boolean validerFormulaire() {
-
         if (spinnerSalles.getSelectedItem() == null) {
-            Toast.makeText(context,
-                    "Veuillez sélectionner une salle",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Veuillez sélectionner une salle", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         if (dateDebutCalendar == null || dateFinCalendar == null) {
-            Toast.makeText(context,
-                    "Veuillez sélectionner les dates",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Veuillez sélectionner les dates", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         if (dateFinCalendar.before(dateDebutCalendar)) {
-            Toast.makeText(context,
-                    "La date de fin doit être après la date de début",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "La date de fin doit être après la date de début", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         if (dateDebutCalendar.before(Calendar.getInstance())) {
-            Toast.makeText(context,
-                    "La date de début ne peut pas être dans le passé",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "La date de début ne peut pas être dans le passé", Toast.LENGTH_SHORT).show();
             return false;
         }
-
         return true;
     }
 
     private void programmerSoutenance() {
-
         Salle salleSelectionnee = (Salle) spinnerSalles.getSelectedItem();
 
         String dateDebutIso = isoFormatter.format(dateDebutCalendar.getTime());
         String dateFinIso = isoFormatter.format(dateFinCalendar.getTime());
-
-        // 🔹 AJOUT DES LOGS POUR DEBUG
-        Log.d("SoutenanceDebug", "Projet ID envoyé : " + projetId);
-        Log.d("SoutenanceDebug", "Salle ID envoyée : " + salleSelectionnee.getId());
-        Log.d("SoutenanceDebug", "Date début : " + dateDebutIso);
-        Log.d("SoutenanceDebug", "Date fin : " + dateFinIso);
 
         SoutenanceDTO dto = new SoutenanceDTO(
                 projetId,
@@ -211,25 +192,24 @@ public class ProgrammerSoutenanceDialog {
                 dateFinIso
         );
 
+        Log.d("SoutenanceDebug", "ID projet envoyé: " + projetId);
+        Log.d("SoutenanceDebug", "ID salle envoyée: " + salleSelectionnee.getId());
+        Log.d("SoutenanceDebug", "Date début envoyée: " + dateDebutIso);
+        Log.d("SoutenanceDebug", "Date fin envoyée: " + dateFinIso);
+
         api.programmerSoutenance(dto).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context,
-                            "Soutenance programmée avec succès",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Soutenance programmée avec succès", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context,
-                            "Erreur lors de la programmation",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Erreur lors de la programmation", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(context,
-                        "Erreur réseau : " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

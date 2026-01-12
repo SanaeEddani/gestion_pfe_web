@@ -10,7 +10,6 @@ import com.example.frontend.R;
 import com.example.frontend.api.AdminApi;
 import com.example.frontend.model.EtudiantProjetDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenanceAdapter.ViewHolder> {
@@ -25,13 +24,6 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
         this.api = api;
     }
 
-    public ProjetSoutenanceAdapter(List<EtudiantProjetDTO> projets, AdminApi api, Context context) {
-        this.projets = projets;
-        this.api = api;
-        this.context = context;
-    }
-
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,18 +35,23 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         EtudiantProjetDTO e = projets.get(pos);
-        h.txtNom.setText(e.getNom() + " " + e.getPrenom());
-        h.txtFiliere.setText(e.getFiliere());
+
+        h.txtNom.setText(e.getNomEtudiant() + " " + e.getPrenomEtudiant());
+        h.txtFiliere.setText(e.getDepartement());
         h.txtSujet.setText(e.getSujet());
         h.txtEntreprise.setText(e.getEntreprise());
         h.txtDates.setText(e.getDateDebut() + " → " + e.getDateFin());
-        h.txtNom.setText(e.getNomEtudiant() + " " + e.getPrenomEtudiant());
-        h.txtFiliere.setText(e.getDepartement());
 
         h.btnProgrammer.setOnClickListener(v -> {
-            new ProgrammerSoutenanceDialog(context, api, (long) e.getId()).show();
-        });
+            // 🔹 Sauvegarder l'ID du projet dans SharedPreferences
+            context.getSharedPreferences("admin_prefs", Context.MODE_PRIVATE)
+                    .edit()
+                    .putLong("projet_id", e.getId())
+                    .apply();
 
+            // 🔹 Ouvrir le dialog
+            new ProgrammerSoutenanceDialog(context, api).show();
+        });
     }
 
     @Override
@@ -68,9 +65,7 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
         notifyDataSetChanged();
     }
 
-
     static class ViewHolder extends RecyclerView.ViewHolder {
-
         Button btnProgrammer;
         TextView txtNom, txtFiliere, txtSujet, txtEntreprise, txtDates;
 
@@ -84,5 +79,4 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
             btnProgrammer = v.findViewById(R.id.btnProgrammer); // ✅ IMPORTANT
         }
     }
-
 }

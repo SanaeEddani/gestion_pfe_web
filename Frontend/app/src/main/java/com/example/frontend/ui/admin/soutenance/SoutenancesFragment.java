@@ -37,7 +37,7 @@ public class SoutenancesFragment extends Fragment {
 
         api = AdminApiService.getInstance(); // injection correcte
 
-        adapter = new ProjetSoutenanceAdapter(new ArrayList<>(), api, getContext());
+        adapter = new ProjetSoutenanceAdapter(new ArrayList<>(), getContext(), api);
         recyclerView.setAdapter(adapter);
 
         loadProjets();
