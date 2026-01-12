@@ -15,10 +15,7 @@ import com.example.frontend.model.Salle;
 import com.example.frontend.model.SoutenanceDTO;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,10 +30,8 @@ public class ProgrammerSoutenanceDialog {
     private Spinner spinnerSalles;
     private Button btnDebutPicker, btnFinPicker;
 
-    private Calendar dateDebutCalendar = null;
-    private Calendar dateFinCalendar = null;
-
-    private List<Salle> listeSalles = new ArrayList<>();
+    private Calendar dateDebutCalendar;
+    private Calendar dateFinCalendar;
 
     private static final SimpleDateFormat displayFormatter =
             new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
@@ -48,15 +43,17 @@ public class ProgrammerSoutenanceDialog {
         this.context = context;
         this.api = api;
 
-        // 🔹 Récupérer l'ID du projet depuis SharedPreferences
+        // ✅ Récupération ID projet depuis SharedPreferences
         this.projetId = context.getSharedPreferences("admin_prefs", Context.MODE_PRIVATE)
                 .getLong("projet_id", -1);
 
-        if (this.projetId == -1) {
-            Toast.makeText(context, "ID du projet introuvable", Toast.LENGTH_SHORT).show();
-            Log.e("SoutenanceDebug", "ID du projet introuvable dans SharedPreferences");
+        if (projetId == -1) {
+            Toast.makeText(context,
+                    "Erreur : ID du projet introuvable",
+                    Toast.LENGTH_LONG).show();
+            Log.e("SoutenanceDebug", "projet_id manquant !");
         } else {
-            Log.d("SoutenanceDebug", "ID du projet récupéré : " + this.projetId);
+            Log.d("SoutenanceDebug", "Projet ID = " + projetId);
         }
     }
 
@@ -92,124 +89,86 @@ public class ProgrammerSoutenanceDialog {
     private void chargerSalles() {
         api.getSalles().enqueue(new Callback<List<Salle>>() {
             @Override
-            public void onResponse(Call<List<Salle>> call, Response<List<Salle>> response) {
+            public void onResponse(Call<List<Salle>> call,
+                                   Response<List<Salle>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    listeSalles = response.body();
-
                     ArrayAdapter<Salle> adapter = new ArrayAdapter<>(
                             context,
                             android.R.layout.simple_spinner_item,
-                            listeSalles
+                            response.body()
                     );
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    adapter.setDropDownViewResource(
+                            android.R.layout.simple_spinner_dropdown_item);
                     spinnerSalles.setAdapter(adapter);
-
-                    if (listeSalles.isEmpty()) {
-                        Toast.makeText(context,
-                                "Aucune salle disponible",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(context,
-                            "Erreur lors du chargement des salles",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Salle>> call, Throwable t) {
                 Toast.makeText(context,
-                        "Erreur réseau",
+                        "Erreur chargement salles",
                         Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void showDateTimePicker(boolean estDateDebut) {
+    private void showDateTimePicker(boolean debut) {
         Calendar now = Calendar.getInstance();
 
-        DatePickerDialog datePicker = new DatePickerDialog(
-                context,
-                (view, year, month, dayOfMonth) -> {
-                    TimePickerDialog timePicker = new TimePickerDialog(
-                            context,
-                            (timeView, hourOfDay, minute) -> {
-                                Calendar selected = Calendar.getInstance();
-                                selected.set(year, month, dayOfMonth, hourOfDay, minute, 0);
+        new DatePickerDialog(context, (view, y, m, d) -> {
+            new TimePickerDialog(context, (tp, h, min) -> {
+                Calendar c = Calendar.getInstance();
+                c.set(y, m, d, h, min, 0);
 
-                                if (estDateDebut) {
-                                    dateDebutCalendar = selected;
-                                    btnDebutPicker.setText("Début: " + displayFormatter.format(selected.getTime()));
-                                } else {
-                                    dateFinCalendar = selected;
-                                    btnFinPicker.setText("Fin: " + displayFormatter.format(selected.getTime()));
-                                }
-                            },
-                            now.get(Calendar.HOUR_OF_DAY),
-                            now.get(Calendar.MINUTE),
-                            true
-                    );
-                    timePicker.show();
-                },
-                now.get(Calendar.YEAR),
+                if (debut) {
+                    dateDebutCalendar = c;
+                    btnDebutPicker.setText("Début : "
+                            + displayFormatter.format(c.getTime()));
+                } else {
+                    dateFinCalendar = c;
+                    btnFinPicker.setText("Fin : "
+                            + displayFormatter.format(c.getTime()));
+                }
+            }, now.get(Calendar.HOUR_OF_DAY),
+                    now.get(Calendar.MINUTE), true).show();
+
+        }, now.get(Calendar.YEAR),
                 now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-        );
-
-        datePicker.show();
+                now.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private boolean validerFormulaire() {
-        if (spinnerSalles.getSelectedItem() == null) {
-            Toast.makeText(context, "Veuillez sélectionner une salle", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (dateDebutCalendar == null || dateFinCalendar == null) {
-            Toast.makeText(context, "Veuillez sélectionner les dates", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (dateFinCalendar.before(dateDebutCalendar)) {
-            Toast.makeText(context, "La date de fin doit être après la date de début", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (dateDebutCalendar.before(Calendar.getInstance())) {
-            Toast.makeText(context, "La date de début ne peut pas être dans le passé", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        if (projetId == -1) return false;
+        if (spinnerSalles.getSelectedItem() == null) return false;
+        if (dateDebutCalendar == null || dateFinCalendar == null) return false;
+        if (dateFinCalendar.before(dateDebutCalendar)) return false;
         return true;
     }
 
     private void programmerSoutenance() {
-        Salle salleSelectionnee = (Salle) spinnerSalles.getSelectedItem();
-
-        String dateDebutIso = isoFormatter.format(dateDebutCalendar.getTime());
-        String dateFinIso = isoFormatter.format(dateFinCalendar.getTime());
+        Salle salle = (Salle) spinnerSalles.getSelectedItem();
 
         SoutenanceDTO dto = new SoutenanceDTO(
                 projetId,
-                salleSelectionnee.getId(),
-                dateDebutIso,
-                dateFinIso
+                salle.getId(),
+                isoFormatter.format(dateDebutCalendar.getTime()),
+                isoFormatter.format(dateFinCalendar.getTime())
         );
-
-        Log.d("SoutenanceDebug", "ID projet envoyé: " + projetId);
-        Log.d("SoutenanceDebug", "ID salle envoyée: " + salleSelectionnee.getId());
-        Log.d("SoutenanceDebug", "Date début envoyée: " + dateDebutIso);
-        Log.d("SoutenanceDebug", "Date fin envoyée: " + dateFinIso);
 
         api.programmerSoutenance(dto).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(context, "Soutenance programmée avec succès", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Erreur lors de la programmation", Toast.LENGTH_SHORT).show();
-                }
+            public void onResponse(Call<Void> call,
+                                   Response<Void> response) {
+                Toast.makeText(context,
+                        "Soutenance programmée",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(context, "Erreur réseau : " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        "Erreur réseau",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -60,7 +60,7 @@ public interface AdminApi {
         public static AdminApi getInstance() {
             if (instance == null) {
                 Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("http://192.168.43.16:9090/") // <-- adapte à ton backend
+                        .baseUrl("http://172.17.225.245:9090/") // <-- adapte à ton backend
                         .addConverterFactory(GsonConverterFactory.create())
                         .build();
                 instance = retrofit.create(AdminApi.class);

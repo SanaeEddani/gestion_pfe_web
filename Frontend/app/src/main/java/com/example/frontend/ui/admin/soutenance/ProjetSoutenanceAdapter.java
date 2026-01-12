@@ -3,6 +3,7 @@ package com.example.frontend.ui.admin.soutenance;
 import android.content.Context;
 import android.view.*;
 import android.widget.*;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,13 +13,16 @@ import com.example.frontend.model.EtudiantProjetDTO;
 
 import java.util.List;
 
-public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenanceAdapter.ViewHolder> {
+public class ProjetSoutenanceAdapter
+        extends RecyclerView.Adapter<ProjetSoutenanceAdapter.ViewHolder> {
 
     private final List<EtudiantProjetDTO> projets;
     private final Context context;
     private final AdminApi api;
 
-    public ProjetSoutenanceAdapter(List<EtudiantProjetDTO> projets, Context context, AdminApi api) {
+    public ProjetSoutenanceAdapter(List<EtudiantProjetDTO> projets,
+                                   Context context,
+                                   AdminApi api) {
         this.projets = projets;
         this.context = context;
         this.api = api;
@@ -43,13 +47,14 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
         h.txtDates.setText(e.getDateDebut() + " → " + e.getDateFin());
 
         h.btnProgrammer.setOnClickListener(v -> {
-            // 🔹 Sauvegarder l'ID du projet dans SharedPreferences
+
+            // ✅ Sauvegarde ID projet
             context.getSharedPreferences("admin_prefs", Context.MODE_PRIVATE)
                     .edit()
-                    .putLong("projet_id", e.getId())
+                    .putLong("projet_id",e.getProjetId())
                     .apply();
 
-            // 🔹 Ouvrir le dialog
+            // ✅ Ouvrir le dialog (SANS projetId dans le constructeur)
             new ProgrammerSoutenanceDialog(context, api).show();
         });
     }
@@ -76,7 +81,7 @@ public class ProjetSoutenanceAdapter extends RecyclerView.Adapter<ProjetSoutenan
             txtSujet = v.findViewById(R.id.txtSujetProjet);
             txtEntreprise = v.findViewById(R.id.txtEntrepriseProjet);
             txtDates = v.findViewById(R.id.txtDatesProjet);
-            btnProgrammer = v.findViewById(R.id.btnProgrammer); // ✅ IMPORTANT
+            btnProgrammer = v.findViewById(R.id.btnProgrammer);
         }
     }
 }

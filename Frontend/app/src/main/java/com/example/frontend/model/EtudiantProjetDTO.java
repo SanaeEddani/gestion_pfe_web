@@ -1,7 +1,10 @@
 package com.example.frontend.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class EtudiantProjetDTO {
 
+    @SerializedName("id")   // 🔥 TRÈS IMPORTANT
     private int projetId;
     private int etudiantId;
     private String nom;
