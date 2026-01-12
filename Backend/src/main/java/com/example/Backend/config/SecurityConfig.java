@@ -19,6 +19,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // désactiver CSRF (ok pour tests)
+                .cors()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**").permitAll() // autoriser toutes les requêtes
                 );
