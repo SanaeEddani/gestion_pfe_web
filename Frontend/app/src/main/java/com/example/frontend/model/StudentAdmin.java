@@ -11,4 +11,8 @@ public class StudentAdmin {
     public boolean affecte;
     public String codeProf;
     public String encadrantNom;
+
+    public String getNom() { return nom; }
+    public String getPrenom() { return prenom; }
+    public String getApogee() { return apogee; }
 }

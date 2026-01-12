@@ -6,8 +6,8 @@
     android:layout_height="wrap_content">
 
     <EditText
-        android:id="@+id/editCodeProf"
-        android:hint="Code Prof"
+        android:id="@+id/editEncadrantNomPrenom"
+        android:hint="Nom et prénom de l'encadrant"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -15,6 +15,14 @@
     <Button
         android:id="@+id/btnAffect"
         android:text="Affecter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        android:backgroundTint="@color/primaryDarkBlue"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+
+        />
+
 </LinearLayout>

@@ -17,9 +17,13 @@ public interface ProjetRepository extends JpaRepository<Projet, Long> {
     // ✅ Version List (si plusieurs projets possibles)
     List<Projet> findByEtudiantId(Long etudiantId);
 
+    long countByEncadrant_Id(Long encadrantId);
+
+
     // Option 3 : projets éligibles >= 4 mois (requête native MySQL)
     @Query(value = "SELECT * FROM projets " +
             "WHERE date_debut IS NOT NULL AND date_fin IS NOT NULL " +
             "AND TIMESTAMPDIFF(MONTH, date_debut, date_fin) >= 4", nativeQuery = true)
     List<Projet> findProjetsEligibles();
+
 }

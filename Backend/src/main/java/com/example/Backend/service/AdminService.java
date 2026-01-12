@@ -6,6 +6,7 @@ import com.example.Backend.model.Utilisateur;
 import com.example.Backend.repository.ProjetRepository;
 import com.example.Backend.repository.UtilisateurRepository;
 import org.springframework.stereotype.Service;
+import com.example.Backend.LimiteEtudiantException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,8 +84,9 @@ public class AdminService {
 
         List<String> etudiants = e.getProjetsEncadres()
                 .stream()
-                .map(p -> p.getEtudiant().getNom())
+                .map(p -> p.getEtudiant().getNom() + " " + p.getEtudiant().getPrenom())
                 .collect(Collectors.toList());
+
 
         dto.setEtudiants(etudiants);
         return dto;
@@ -106,16 +108,46 @@ public class AdminService {
                     return p;
                 });
 
-        projet.setEncadrant(encadrant); // affecte l'étudiant à l'encadrant
+        // Vérifier la limite de 10 étudiants
+        long nbEtudiants = projetRepository.countByEncadrant_Id(encadrant.getId());
+        if (nbEtudiants >= 10) {
+            throw new LimiteEtudiantException("Cet encadrant a déjà atteint la limite de 10 étudiants.");
+        }
+
+
+// Affectation
+        projet.setEncadrant(encadrant);
         projetRepository.save(projet);
+
     }
 
 
     public void reaffecter(AffectationRequestDTO request) {
         Projet projet = projetRepository.findByEtudiant_Id(request.getEtudiantId()).orElseThrow();
         Utilisateur newEncadrant = utilisateurRepository.findById(request.getEncadrantId()).orElseThrow();
+        // Vérifier la limite de 10 étudiants
+        long nbEtudiants = projetRepository.countByEncadrant_Id(newEncadrant.getId());
+
+// Si l'étudiant est déjà affecté à cet encadrant, ne pas compter double
+        Projet currentProjet = projetRepository.findByEtudiant_Id(request.getEtudiantId()).orElseThrow();
+        if (currentProjet.getEncadrant() == null || !currentProjet.getEncadrant().getId().equals(newEncadrant.getId())) {
+            if (nbEtudiants >= 10) {
+                throw new RuntimeException("Cet encadrant a déjà atteint la limite de 10 étudiants.");
+            }
+        }
+
+// Réaffectation
+        currentProjet.setEncadrant(newEncadrant);
+        projetRepository.save(currentProjet);
+
+        if (nbEtudiants >= 10) {
+            throw new RuntimeException("Cet encadrant a déjà atteint la limite de 10 étudiants.");
+        }
+
+// Réaffectation
         projet.setEncadrant(newEncadrant);
         projetRepository.save(projet);
+
     }
 
     public void supprimerAffectation(Long etudiantId) {
@@ -140,26 +172,66 @@ public class AdminService {
                         return p;
                     });
 
+            // Vérifier la limite avant chaque ajout
+            if (projetRepository.countByEncadrant_Id(encadrantId) >= 10) {
+                throw new RuntimeException("Cet encadrant a déjà atteint la limite de 10 étudiants.");
+            }
+
             projet.setEncadrant(encadrant);
             projetRepository.save(projet);
+
         }
     }
 
     public void removeStudentsFromEncadrant(Long encadrantId, List<String> numAppogeeList) {
-        Utilisateur encadrant = utilisateurRepository.findById(encadrantId).orElseThrow();
-
         for (String numAppogee : numAppogeeList) {
             Utilisateur etudiant = utilisateurRepository.findAll().stream()
                     .filter(u -> u.getAppogee() != null && numAppogee.equals(u.getAppogee().getNumAppogee()))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Étudiant avec Apogée " + numAppogee + " introuvable"));
 
-            Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId()).orElse(null);
-            if (projet != null && projet.getEncadrant() != null && projet.getEncadrant().getId().equals(encadrantId)) {
-                projet.setEncadrant(null);
-                projetRepository.save(projet);
-            }
+            Projet projet = projetRepository.findByEtudiant_Id(etudiant.getId())
+                    .orElseThrow(() -> new RuntimeException("Projet de l'étudiant introuvable"));
+
+            // Désaffecter l'étudiant
+            projet.setEncadrant(null);
+            projetRepository.save(projet);
         }
     }
+
+    public DashboardStatsDTO getDashboardStats() {
+
+        DashboardStatsDTO dto = new DashboardStatsDTO();
+
+        // Étudiants
+        List<Utilisateur> etudiants =
+                utilisateurRepository.findByRole_Name("etudiant");
+
+        long affectes = etudiants.stream()
+                .filter(e ->
+                        projetRepository.findByEtudiant_Id(e.getId())
+                                .map(p -> p.getEncadrant() != null)
+                                .orElse(false)
+                ).count();
+
+        dto.setTotalEtudiants(etudiants.size());
+        dto.setEtudiantsAffectes((int) affectes);
+        dto.setEtudiantsNonAffectes(etudiants.size() - (int) affectes);
+
+        // Encadrants
+        List<Utilisateur> encadrants =
+                utilisateurRepository.findByRole_Name("encadrant");
+
+        long avecEtudiants = encadrants.stream()
+                .filter(e -> !e.getProjetsEncadres().isEmpty())
+                .count();
+
+        dto.setTotalEncadrants(encadrants.size());
+        dto.setEncadrantsAvecEtudiants((int) avecEtudiants);
+        dto.setEncadrantsSansEtudiants(encadrants.size() - (int) avecEtudiants);
+
+        return dto;
+    }
+
 
 }

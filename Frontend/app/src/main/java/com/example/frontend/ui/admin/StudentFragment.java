@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import org.json.JSONObject;
+
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -115,6 +117,13 @@ public class StudentFragment extends Fragment implements StudentAdapter.OnStuden
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadStudents(getView().findViewById(R.id.recyclerStudents));
+    }
+
+
     private void loadStudents(RecyclerView recyclerView) {
         api.getStudents().enqueue(new Callback<List<StudentAdmin>>() {
             @Override
@@ -147,12 +156,12 @@ public class StudentFragment extends Fragment implements StudentAdapter.OnStuden
         View dialogView = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_affect_student, null);
 
-        EditText editCodeProf = dialogView.findViewById(R.id.editCodeProf);
+        EditText editEncadrantNomPrenom = dialogView.findViewById(R.id.editEncadrantNomPrenom);
         Button btnConfirm = dialogView.findViewById(R.id.btnAffect);
 
         // Pré-remplissage en cas de réaffectation
-        if (isReaffect && student.codeProf != null) {
-            editCodeProf.setText(student.codeProf);
+        if (isReaffect && student.encadrantNom != null) {
+            editEncadrantNomPrenom.setText(student.encadrantNom);
         }
 
         AlertDialog dialog = new AlertDialog.Builder(getContext())
@@ -163,22 +172,23 @@ public class StudentFragment extends Fragment implements StudentAdapter.OnStuden
 
         btnConfirm.setOnClickListener(v -> {
 
-            String codeProf = editCodeProf.getText().toString().trim();
-            if (codeProf.isEmpty()) {
-                editCodeProf.setError("Code prof obligatoire");
+            String nomPrenom = editEncadrantNomPrenom.getText().toString().trim();
+            if (nomPrenom.isEmpty()) {
+                editEncadrantNomPrenom.setError("Nom et prénom obligatoires");
                 return;
             }
 
             Long encadrantId = null;
             for (EncadrantAdmin e : encadrants) {
-                if (e.codeProf != null && e.codeProf.equalsIgnoreCase(codeProf)) {
+                String fullName = e.nom + " " + e.prenom;
+                if (fullName.equalsIgnoreCase(nomPrenom)) {
                     encadrantId = e.id;
                     break;
                 }
             }
 
             if (encadrantId == null) {
-                editCodeProf.setError("Code prof introuvable");
+                editEncadrantNomPrenom.setError("Encadrant introuvable");
                 return;
             }
 
@@ -199,10 +209,17 @@ public class StudentFragment extends Fragment implements StudentAdapter.OnStuden
                         dialog.dismiss();
                         loadStudents(getView().findViewById(R.id.recyclerStudents));
                     } else {
-                        Toast.makeText(getContext(),
-                                "Erreur serveur",
-                                Toast.LENGTH_LONG).show();
+                        try {
+                            String errorJson = response.errorBody().string();
+                            JSONObject obj = new JSONObject(errorJson);
+                            String errorMsg = obj.has("message") ? obj.getString("message") : "Erreur serveur";
+                            Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Erreur serveur", Toast.LENGTH_LONG).show();
+                        }
+
                     }
+
                 }
 
                 @Override

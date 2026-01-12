@@ -3,40 +3,48 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="12dp"
+    android:background="#F5F7FA">
 
     <!-- ===== ZONE FILTRAGE ===== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/card_background"
+        android:padding="12dp"
+        android:layout_marginBottom="10dp">
 
         <EditText
             android:id="@+id/editFilterName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nom / Prénom" />
+            android:hint="Nom / Prénom"
+            android:background="@drawable/bg_input_blue"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/editFilterDepartement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Département" />
+            android:hint="Département"
+            android:background="@drawable/bg_input_blue"
+            android:layout_marginBottom="8dp"/>
 
         <EditText
             android:id="@+id/editFilterNbrEtudiants"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre d'étudiants encadrés"
-            android:inputType="number"/>
+            android:inputType="number"
+            android:background="@drawable/bg_input_blue"/>
     </LinearLayout>
 
-    <!-- ===== LISTE DES ENCADRANTS (SCROLL ACTIF) ===== -->
+    <!-- ===== LISTE DES ENCADRANTS ===== -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerEncadrants"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical"
-        android:overScrollMode="always"/>
+        android:scrollbars="vertical"/>
 </LinearLayout>

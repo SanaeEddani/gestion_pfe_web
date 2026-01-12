@@ -3,13 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:minWidth="300dp"
+    android:maxWidth="600dp">
 
     <EditText
-        android:id="@+id/editNumApogee"
+        android:id="@+id/editNomPrenomStudent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Numéro Apogée" />
+        android:hint="Nom et prénom de l'étudiant" />
+
 
     <LinearLayout
         android:id="@+id/containerApogeeList"
@@ -22,11 +25,18 @@
         android:id="@+id/btnAddApogee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ajouter à la liste" />
+        android:text="Ajouter à la liste"
+        android:backgroundTint="@color/primaryDarkBlue"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
 
     <Button
         android:id="@+id/btnConfirmAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirmer" />
+        android:text="Confirmer"
+        android:backgroundTint="@color/primaryDarkBlue"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
+
 </LinearLayout>

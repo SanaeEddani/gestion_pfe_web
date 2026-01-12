@@ -34,6 +34,8 @@ public interface AdminApi {
 
     @POST("admin/encadrants/{encadrantId}/removeStudents")
     Call<Void> removeStudentsFromEncadrant(@Path("encadrantId") Long encadrantId, @Body List<String> numAppogeeList);
+    @GET("admin/dashboard")
+    Call<DashboardStats> getDashboardStats();
 
     @GET("/api/admin/soutenances/projets-eligibles")
     Call<List<EtudiantProjetDTO>> getProjetsEligibles();

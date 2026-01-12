@@ -53,4 +53,10 @@ public class AdminController {
         adminService.removeStudentsFromEncadrant(encadrantId, numAppogeeList);
     }
 
+    @GetMapping("/dashboard")
+    public DashboardStatsDTO dashboardStats() {
+        return adminService.getDashboardStats();
+    }
+
+
 }
