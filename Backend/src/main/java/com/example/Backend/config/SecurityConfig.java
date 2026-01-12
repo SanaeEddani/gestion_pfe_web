@@ -22,7 +22,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .csrf(csrf -> csrf.disable())
         .cors(cors -> cors.configurationSource(request -> {
             var cors = new org.springframework.web.cors.CorsConfiguration();
-            cors.setAllowedOrigins(List.of("https://gestion-pfe-delta.vercel.app"));
+            cors.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
             cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             cors.setAllowCredentials(true);
