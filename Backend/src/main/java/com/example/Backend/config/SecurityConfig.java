@@ -25,8 +25,9 @@ public class SecurityConfig {
                 var config = new org.springframework.web.cors.CorsConfiguration(); // 🔹 Renommé de cors → config
                 config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app")); // ✅ Utilisation de allowedOriginPatterns
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                config.setAllowedHeaders(List.of("*"));
-                config.setAllowCredentials(true);
+               cors.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
+cors.setAllowCredentials(true);
+
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
