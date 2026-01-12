@@ -24,10 +24,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
+                config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app")); // ⚡ impératif
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
-                config.setAllowCredentials(true);
+                config.setAllowCredentials(true); // ⚡ garder true pour JWT/cookies
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
