@@ -20,11 +20,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ⚡ Bean CorsFilter explicite pour que le preflight OPTIONS fonctionne
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app")); // ✅ origine exacte
+        config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -38,10 +37,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .cors() // ⚡ CORS activé via CorsFilter bean
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
-            );
+            .cors(cors -> {}); // ⚡ juste activer cors, le bean CorsFilter fait le reste
+
+        // ⚡ autorisations séparées
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/**").permitAll()
+        );
 
         return http.build();
     }
