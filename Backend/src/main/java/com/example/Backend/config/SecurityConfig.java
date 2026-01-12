@@ -16,17 +16,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // désactiver CSRF (ok pour tests)
-                .cors()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll() // autoriser toutes les requêtes
-                );
+   
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable())
+        .cors(cors -> cors.configurationSource(request -> {
+            var cors = new org.springframework.web.cors.CorsConfiguration();
+            cors.setAllowedOrigins(List.of("https://gestion-pfe-delta.vercel.app"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            cors.setAllowedHeaders(List.of("*"));
+            cors.setAllowCredentials(true);
+            return cors;
+        }))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/**").permitAll()
+        );
 
+    return http.build();
+}
 
-        return http.build();
-    }
 
 
 }

@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://gestion-pfe-delta.vercel.app") // frontend exact
+              .allowedOriginPatterns("https://gestion-pfe-delta.vercel.app") // frontend exact
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true) // nécessaire pour JWT/cookies
