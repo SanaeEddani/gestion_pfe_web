@@ -6,8 +6,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
 
-import java.util.List; // ✅ Import nécessaire pour List.of
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -22,12 +23,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(request -> {
-                var config = new org.springframework.web.cors.CorsConfiguration(); // 🔹 Renommé de cors → config
-                config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app")); // ✅ Utilisation de allowedOriginPatterns
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-               cors.setAllowedOriginPatterns(List.of("https://gestion-pfe-delta.vercel.app"));
-cors.setAllowCredentials(true);
-
+                config.setAllowedHeaders(List.of("*"));
+                config.setAllowCredentials(true);
                 return config;
             }))
             .authorizeHttpRequests(auth -> auth
